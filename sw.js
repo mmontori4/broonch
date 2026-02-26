@@ -1,4 +1,4 @@
-const CACHE_NAME = 'broonch-v1';
+const CACHE_NAME = 'broonch-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -8,7 +8,9 @@ const ASSETS = [
   './js/tracker.js',
   './js/trends.js',
   './js/app.js',
-  './manifest.json'
+  './manifest.json',
+  './img/falco.png',
+  './img/fox.png'
 ];
 
 self.addEventListener('install', e => {
