@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0a0a1a">
+  <title>broonch gym</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- Screen 1: Profile Selection -->
+  <div id="screen-profile" class="screen active">
+    <div class="profile-container">
+      <h1 class="profile-title">which broonch are you?</h1>
+      <div class="profile-cards">
+        <button class="profile-card" data-user="huels" onclick="App.selectProfile('huels')">
+          <div class="character-art falco">
+            <div class="char-body"></div>
+            <div class="char-beak"></div>
+            <div class="char-eye"></div>
+            <div class="char-wing wing-l"></div>
+            <div class="char-wing wing-r"></div>
+          </div>
+          <span class="profile-name">huels</span>
+        </button>
+        <button class="profile-card" data-user="manoot" onclick="App.selectProfile('manoot')">
+          <div class="character-art fox">
+            <div class="char-body"></div>
+            <div class="char-ears"></div>
+            <div class="char-eye"></div>
+            <div class="char-snout"></div>
+            <div class="char-tail"></div>
+          </div>
+          <span class="profile-name">manoot</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 2: Dashboard -->
+  <div id="screen-dashboard" class="screen">
+    <header class="dash-header">
+      <div class="dash-greeting">
+        <div class="dash-icon" id="dash-icon"></div>
+        <h1 id="dash-title">sup, broonch</h1>
+      </div>
+      <button class="switch-user-btn" onclick="App.switchUser()" title="Switch user">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+      </button>
+    </header>
+
+    <div class="week-selector">
+      <button class="week-btn" onclick="App.changeWeek(-1)">&lsaquo;</button>
+      <div class="week-info">
+        <span id="week-label">Week 1</span>
+        <span id="phase-label" class="phase-badge">Foundation</span>
+      </div>
+      <button class="week-btn" onclick="App.changeWeek(1)">&rsaquo;</button>
+    </div>
+    <div class="week-progress">
+      <div class="week-progress-bar" id="week-progress-bar"></div>
+    </div>
+
+    <div class="workout-grid" id="workout-grid"></div>
+
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-screen="dashboard" onclick="App.showScreen('dashboard')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+        <span>Home</span>
+      </button>
+      <button class="nav-btn" data-screen="trends" onclick="App.showScreen('trends')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span>Trends</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Screen 3: Workout Tracker -->
+  <div id="screen-tracker" class="screen">
+    <header class="tracker-header">
+      <button class="back-btn" onclick="App.showScreen('dashboard')">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="tracker-title-wrap">
+        <h2 id="tracker-title">Workout</h2>
+        <span id="tracker-subtitle" class="tracker-sub"></span>
+      </div>
+      <button class="save-btn" id="save-btn" onclick="Tracker.save()">Save</button>
+    </header>
+    <div class="tracker-body" id="tracker-body"></div>
+  </div>
+
+  <!-- Screen 4: Trends -->
+  <div id="screen-trends" class="screen">
+    <header class="trends-header">
+      <h2>Trends</h2>
+    </header>
+    <div class="trends-body">
+      <div class="trend-section">
+        <h3>Exercise Progression</h3>
+        <div class="chart-select-row">
+          <select id="exercise-select" onchange="Trends.renderExerciseChart()"></select>
+        </div>
+        <div class="chart-container"><canvas id="chart-exercise"></canvas></div>
+      </div>
+      <div class="trend-section">
+        <h3>Attendance</h3>
+        <div class="attendance-grid" id="attendance-grid"></div>
+      </div>
+      <div class="trend-section">
+        <h3>Cardio HR</h3>
+        <div class="chart-container"><canvas id="chart-cardio"></canvas></div>
+      </div>
+    </div>
+    <nav class="bottom-nav">
+      <button class="nav-btn" data-screen="dashboard" onclick="App.showScreen('dashboard')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+        <span>Home</span>
+      </button>
+      <button class="nav-btn active" data-screen="trends" onclick="App.showScreen('trends')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span>Trends</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/tracker.js"></script>
+  <script src="js/trends.js"></script>
+  <script src="js/app.js"></script>
+  <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');</script>
+</body>
+</html>
