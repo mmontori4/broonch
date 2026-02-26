@@ -87,102 +87,12 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 
 .profile-name { font-size: 1.2rem; font-weight: 600; }
 
-/* Character CSS art */
-.character-art {
-  width: 80px;
-  height: 80px;
-  position: relative;
+/* Character images */
+.character-img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
 }
-
-/* Falco */
-.falco .char-body {
-  position: absolute;
-  bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 50px; height: 55px;
-  background: linear-gradient(180deg, #4a6fa5 0%, #2c4a7c 100%);
-  border-radius: 50% 50% 40% 40%;
-}
-.falco .char-beak {
-  position: absolute;
-  top: 18px; left: 50%; transform: translateX(-50%);
-  width: 0; height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-top: 14px solid #e8a840;
-}
-.falco .char-eye {
-  position: absolute;
-  top: 10px; left: 50%; transform: translateX(-50%);
-  width: 30px; height: 14px;
-  background: #ff4444;
-  border-radius: 50%;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
-}
-.falco .wing-l, .falco .wing-r {
-  position: absolute;
-  bottom: 10px; width: 18px; height: 35px;
-  background: #3a5a8c;
-  border-radius: 50%;
-}
-.falco .wing-l { left: 0; transform: rotate(15deg); }
-.falco .wing-r { right: 0; transform: rotate(-15deg); }
-
-/* Fox */
-.fox .char-body {
-  position: absolute;
-  bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 50px; height: 55px;
-  background: linear-gradient(180deg, #d4853a 0%, #b06a2a 100%);
-  border-radius: 50% 50% 40% 40%;
-}
-.fox .char-ears {
-  position: absolute;
-  top: 0; left: 50%; transform: translateX(-50%);
-  width: 50px; height: 20px;
-}
-.fox .char-ears::before, .fox .char-ears::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  width: 0; height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-bottom: 18px solid #d4853a;
-}
-.fox .char-ears::before { left: 2px; }
-.fox .char-ears::after { right: 2px; }
-.fox .char-eye {
-  position: absolute;
-  top: 18px; left: 50%; transform: translateX(-50%);
-  width: 24px; height: 12px;
-  background: #44cc44;
-  border-radius: 50%;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
-}
-.fox .char-snout {
-  position: absolute;
-  top: 30px; left: 50%; transform: translateX(-50%);
-  width: 16px; height: 10px;
-  background: #f0d0a0;
-  border-radius: 50%;
-}
-.fox .char-tail {
-  position: absolute;
-  bottom: 5px; right: -8px;
-  width: 20px; height: 30px;
-  background: #d4853a;
-  border-radius: 0 50% 50% 0;
-  transform: rotate(-20deg);
-}
-.fox .char-tail::after {
-  content: '';
-  position: absolute;
-  bottom: 0; right: 0;
-  width: 10px; height: 10px;
-  background: #f0f0f0;
-  border-radius: 50%;
-}
-
 /* ===== DASHBOARD ===== */
 #screen-dashboard {
   background: var(--bg);
@@ -200,9 +110,12 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
   width: 36px; height: 36px;
   border-radius: 50%;
   flex-shrink: 0;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
 }
-.dash-icon.falco { background: linear-gradient(135deg, #4a6fa5, #2c4a7c); }
-.dash-icon.fox { background: linear-gradient(135deg, #d4853a, #b06a2a); }
+.dash-icon.falco { background-image: url('../img/falco.png'); }
+.dash-icon.fox { background-image: url('../img/fox.png'); }
 #dash-title { font-size: 1.4rem; font-weight: 700; }
 
 .switch-user-btn {
