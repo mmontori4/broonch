@@ -78,6 +78,7 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
   align-items: center;
   gap: 16px;
   transition: all 0.2s;
+  overflow: hidden;
 }
 .profile-card:active {
   transform: scale(0.95);
@@ -89,7 +90,7 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 
 /* Character images */
 .character-img {
-  width: 100px;
+  width: 100%;
   height: 100px;
   object-fit: contain;
 }
