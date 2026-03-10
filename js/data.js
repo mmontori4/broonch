@@ -34,22 +34,27 @@ const WORKOUTS = {
     id: 'monday_push',
     day: 0,
     dayLabel: 'Mon',
-    name: 'Upper Push + Core',
+    name: 'Upper Body A',
     duration: '60 min',
     location: 'gym',
     type: 'lifting',
     sections: [
       {
-        title: 'Main Lifts',
+        title: 'Push',
         exercises: [
           { id: 'bench_press', name: 'Barbell Bench Press', sets: 4, reps: '6-8', rest: '3 min', note: 'Primary horizontal push' },
           { id: 'overhead_press', name: 'Overhead Press (BB/DB)', sets: 4, reps: '8-10', rest: '2 min', note: 'Primary vertical push' },
-          { id: 'incline_db_press', name: 'Incline DB Press', sets: 3, reps: '10-12', rest: '90 sec', note: 'Upper chest emphasis' },
-          { id: 'dips', name: 'Ring Dips / Machine Dips', sets: 3, reps: '8-12', rest: '90 sec', note: 'Chest/tricep compound' },
         ]
       },
       {
-        title: 'Core Work',
+        title: 'Pull',
+        exercises: [
+          { id: 'pullups', name: 'Pull-ups (weighted if able)', sets: 4, reps: '6-10', rest: '2.5 min', note: 'Use squat rack or rings' },
+          { id: 'barbell_row', name: 'Barbell Row', sets: 4, reps: '8-10', rest: '2 min', note: 'From squat rack' },
+        ]
+      },
+      {
+        title: 'Core',
         exercises: [
           { id: 'dead_bugs', name: 'Dead Bugs', sets: 3, reps: '10/side', rest: '30 sec', note: '' },
           { id: 'pallof_press', name: 'Cable Pallof Press', sets: 3, reps: '12/side', rest: '30 sec', note: '' },
@@ -76,16 +81,21 @@ const WORKOUTS = {
     id: 'wednesday_pull',
     day: 2,
     dayLabel: 'Wed',
-    name: 'Upper Pull + Accessories',
+    name: 'Upper Body B',
     duration: '60 min',
     location: 'gym',
     type: 'lifting',
     sections: [
       {
-        title: 'Main Lifts',
+        title: 'Push',
         exercises: [
-          { id: 'pullups', name: 'Pull-ups (weighted if able)', sets: 4, reps: '6-10', rest: '2.5 min', note: 'Use squat rack or rings' },
-          { id: 'barbell_row', name: 'Barbell Row', sets: 4, reps: '8-10', rest: '2 min', note: 'From squat rack' },
+          { id: 'incline_db_press', name: 'Incline DB Press', sets: 3, reps: '10-12', rest: '90 sec', note: 'Upper chest emphasis' },
+          { id: 'dips', name: 'Ring Dips / Machine Dips', sets: 3, reps: '8-12', rest: '90 sec', note: 'Chest/tricep compound' },
+        ]
+      },
+      {
+        title: 'Pull',
+        exercises: [
           { id: 'face_pulls', name: 'Cable Face Pulls', sets: 3, reps: '15-20', rest: '60 sec', note: 'Rear delt/rotator cuff health' },
           { id: 'single_arm_row', name: 'Single-Arm DB Row', sets: 3, reps: '10-12', rest: '90 sec', note: 'Unilateral strength' },
         ]

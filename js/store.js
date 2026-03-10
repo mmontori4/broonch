@@ -121,6 +121,25 @@ const Store = {
     return grid;
   },
 
+  // Get missed workouts for a specific user (bypasses _user for cross-user access)
+  getMissedWorkouts(user) {
+    const currentWeek = this.getCurrentWeek();
+    let entries;
+    try {
+      entries = JSON.parse(localStorage.getItem(`broonch_${user}_workouts`)) || [];
+    } catch {
+      entries = [];
+    }
+    let missed = 0;
+    for (let w = 1; w < currentWeek; w++) {
+      for (const wid of WORKOUT_ORDER) {
+        const logged = entries.some(e => e.workoutId === wid && e.week === w);
+        if (!logged) missed++;
+      }
+    }
+    return missed;
+  },
+
   // Get current week number based on plan start date
   getCurrentWeek() {
     const start = new Date(PLAN_START);

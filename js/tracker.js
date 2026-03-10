@@ -1,3 +1,64 @@
+// ===== STOPWATCH =====
+const Stopwatch = {
+  _interval: null,
+  _startTime: null,
+  _elapsed: 0,
+  _running: false,
+
+  show() {
+    document.getElementById('stopwatch-bar').classList.remove('hidden');
+    this.reset();
+  },
+
+  hide() {
+    document.getElementById('stopwatch-bar').classList.add('hidden');
+    this.stop();
+  },
+
+  toggle() {
+    if (this._running) this.pause(); else this.start();
+  },
+
+  start() {
+    this._running = true;
+    this._startTime = Date.now() - this._elapsed;
+    this._interval = setInterval(() => this._updateDisplay(), 100);
+    document.getElementById('sw-toggle').textContent = '\u23F8';
+    document.getElementById('stopwatch-bar').classList.add('running');
+  },
+
+  pause() {
+    this._running = false;
+    this._elapsed = Date.now() - this._startTime;
+    clearInterval(this._interval);
+    document.getElementById('sw-toggle').textContent = '\u25B6';
+    document.getElementById('stopwatch-bar').classList.remove('running');
+  },
+
+  stop() {
+    this.pause();
+    this._elapsed = 0;
+    this._updateDisplay();
+  },
+
+  reset() {
+    this.pause();
+    this._elapsed = 0;
+    this._updateDisplay();
+  },
+
+  _updateDisplay() {
+    if (this._running) {
+      this._elapsed = Date.now() - this._startTime;
+    }
+    const totalSec = Math.floor(this._elapsed / 1000);
+    const min = Math.floor(totalSec / 60);
+    const sec = totalSec % 60;
+    document.getElementById('sw-time').textContent =
+      `${min}:${sec.toString().padStart(2, '0')}`;
+  }
+};
+
 // ===== WORKOUT TRACKER =====
 // Dynamic form generation for lifting, supersets, cardio, and recovery
 
@@ -51,6 +112,13 @@ const Tracker = {
     const saveBtn = document.getElementById('save-btn');
     saveBtn.textContent = 'Save';
     saveBtn.classList.remove('saved');
+
+    // Show stopwatch for lifting/superset workouts
+    if (w.type === 'lifting' || w.type === 'supersets') {
+      Stopwatch.show();
+    } else {
+      Stopwatch.hide();
+    }
 
     App.showScreen('tracker');
   },

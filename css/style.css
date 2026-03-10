@@ -564,6 +564,168 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 }
 .toast.show { opacity: 1; }
 
+/* ===== RATITO WALLET ===== */
+#screen-wallet {
+  background: var(--bg);
+  padding-bottom: calc(var(--nav-h) + var(--safe-bottom));
+}
+
+.wallet-header {
+  padding: 20px 20px 0;
+}
+.wallet-header h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, var(--orange), var(--red));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.wallet-body {
+  padding: 0 16px 16px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.ratito-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 0 8px;
+}
+
+.ratito-svg {
+  width: 140px;
+  height: auto;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 12px #d4c5a020);
+}
+
+.ratito-msg {
+  margin-top: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--orange);
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.wallet-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.wallet-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.wallet-card.has-debt {
+  border-color: var(--red)60;
+}
+.wallet-card.clean {
+  border-color: var(--green-dim);
+}
+
+.wallet-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.wallet-stats {
+  text-align: right;
+}
+
+.wallet-missed {
+  font-size: 0.8rem;
+  color: var(--text2);
+  margin-bottom: 2px;
+}
+
+.wallet-debt {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--red);
+}
+.wallet-card.clean .wallet-debt {
+  color: var(--green);
+}
+
+.wallet-fine-print {
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--text2);
+  margin-top: 16px;
+}
+
+/* ===== STOPWATCH ===== */
+.stopwatch-bar {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  z-index: 20;
+}
+.stopwatch-bar.hidden {
+  display: none;
+}
+.stopwatch-bar.running {
+  border-top-color: var(--green);
+}
+
+.sw-display {
+  font-size: 2rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  min-width: 100px;
+  text-align: center;
+  color: var(--text);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.stopwatch-bar.running .sw-display {
+  color: var(--green);
+}
+
+.sw-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text2);
+}
+.sw-btn:active {
+  background: var(--surface2);
+  color: var(--text);
+}
+
+.sw-toggle {
+  font-size: 1.4rem;
+  color: var(--green);
+}
+
 /* ===== UTILITIES ===== */
 .sr-only {
   position: absolute; width: 1px; height: 1px;

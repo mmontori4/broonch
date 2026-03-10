@@ -90,6 +90,8 @@ const App = {
     // Refresh data when showing certain screens
     if (name === 'dashboard') {
       this._renderWeek();
+    } else if (name === 'wallet') {
+      Wallet.init();
     } else if (name === 'trends') {
       Trends.init();
     }

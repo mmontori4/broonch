@@ -61,6 +61,10 @@
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
         <span>Home</span>
       </button>
+      <button class="nav-btn" data-screen="wallet" onclick="App.showScreen('wallet')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="17" cy="14" r="1.5" fill="currentColor"/></svg>
+        <span>Ratito</span>
+      </button>
       <button class="nav-btn" data-screen="trends" onclick="App.showScreen('trends')">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         <span>Trends</span>
@@ -81,9 +85,37 @@
       <button class="save-btn" id="save-btn" onclick="Tracker.save()">Save</button>
     </header>
     <div class="tracker-body" id="tracker-body"></div>
+    <!-- Stopwatch -->
+    <div id="stopwatch-bar" class="stopwatch-bar hidden">
+      <button class="sw-btn sw-reset" onclick="Stopwatch.reset()">Reset</button>
+      <div class="sw-display" id="sw-time" onclick="Stopwatch.toggle()">0:00</div>
+      <button class="sw-btn sw-toggle" id="sw-toggle" onclick="Stopwatch.toggle()">&#x25B6;</button>
+    </div>
   </div>
 
-  <!-- Screen 4: Trends -->
+  <!-- Screen 4: Ratito Wallet -->
+  <div id="screen-wallet" class="screen">
+    <header class="wallet-header">
+      <h2>ratito wallet</h2>
+    </header>
+    <div class="wallet-body" id="wallet-body"></div>
+    <nav class="bottom-nav">
+      <button class="nav-btn" data-screen="dashboard" onclick="App.showScreen('dashboard')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+        <span>Home</span>
+      </button>
+      <button class="nav-btn active" data-screen="wallet" onclick="App.showScreen('wallet')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="17" cy="14" r="1.5" fill="currentColor"/></svg>
+        <span>Ratito</span>
+      </button>
+      <button class="nav-btn" data-screen="trends" onclick="App.showScreen('trends')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span>Trends</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Screen 5: Trends -->
   <div id="screen-trends" class="screen">
     <header class="trends-header">
       <h2>Trends</h2>
@@ -110,6 +142,10 @@
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
         <span>Home</span>
       </button>
+      <button class="nav-btn" data-screen="wallet" onclick="App.showScreen('wallet')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="17" cy="14" r="1.5" fill="currentColor"/></svg>
+        <span>Ratito</span>
+      </button>
       <button class="nav-btn active" data-screen="trends" onclick="App.showScreen('trends')">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         <span>Trends</span>
@@ -120,6 +156,7 @@
   <script src="js/data.js"></script>
   <script src="js/store.js"></script>
   <script src="js/tracker.js"></script>
+  <script src="js/wallet.js"></script>
   <script src="js/trends.js"></script>
   <script src="js/app.js"></script>
   <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');</script>

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'broonch-v2';
+const CACHE_NAME = 'broonch-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -6,6 +6,7 @@ const ASSETS = [
   './js/data.js',
   './js/store.js',
   './js/tracker.js',
+  './js/wallet.js',
   './js/trends.js',
   './js/app.js',
   './manifest.json',
