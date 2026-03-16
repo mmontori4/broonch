@@ -121,23 +121,17 @@ const Store = {
     return grid;
   },
 
-  // Get missed workouts for a specific user (bypasses _user for cross-user access)
-  getMissedWorkouts(user) {
-    const currentWeek = this.getCurrentWeek();
-    let entries;
+  // Wallet balance (manual, per-user)
+  getWalletBalance(user) {
     try {
-      entries = JSON.parse(localStorage.getItem(`broonch_${user}_workouts`)) || [];
+      return parseFloat(localStorage.getItem(`broonch_${user}_wallet`)) || 0;
     } catch {
-      entries = [];
+      return 0;
     }
-    let missed = 0;
-    for (let w = 1; w < currentWeek; w++) {
-      for (const wid of WORKOUT_ORDER) {
-        const logged = entries.some(e => e.workoutId === wid && e.week === w);
-        if (!logged) missed++;
-      }
-    }
-    return missed;
+  },
+
+  setWalletBalance(user, amount) {
+    localStorage.setItem(`broonch_${user}_wallet`, amount.toString());
   },
 
   // Get current week number based on plan start date

@@ -57,13 +57,16 @@ const App = {
       const w = WORKOUTS[wid];
       const logged = Store.isLogged(wid, week);
 
+      const typeClass = w.type === 'cardio' ? 'cardio' :
+                        w.type === 'recovery' ? 'recovery' : 'lifting';
+
       const card = document.createElement('button');
       card.className = 'workout-card' + (logged ? ' logged' : '');
       card.onclick = () => Tracker.open(wid, week);
 
       card.innerHTML = `
-        <div class="wc-day ${w.location}">
-          <span class="day-num">${w.dayLabel}</span>
+        <div class="wc-type ${typeClass}">
+          <span class="wc-type-label">${w.shortName}</span>
         </div>
         <div class="wc-info">
           <div class="wc-name">${w.name}</div>

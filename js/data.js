@@ -27,14 +27,11 @@ function getPhaseSetAdjustment(week, baseConfig) {
   return { ...baseConfig, sets: Math.max(2, Math.ceil(baseConfig.sets / 2)) };
 }
 
-const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
 const WORKOUTS = {
   monday_push: {
     id: 'monday_push',
-    day: 0,
-    dayLabel: 'Mon',
     name: 'Upper Body A',
+    shortName: 'UB-A',
     duration: '60 min',
     location: 'gym',
     type: 'lifting',
@@ -66,22 +63,26 @@ const WORKOUTS = {
 
   tuesday_cardio: {
     id: 'tuesday_cardio',
-    day: 1,
-    dayLabel: 'Tue',
     name: 'Zone 2 Cardio',
+    shortName: 'Z2',
     duration: '45 min',
     location: 'home',
     type: 'cardio',
+    cardioMode: 'zone2',
     targetHR: '60-70% max HR',
-    modalities: ['Rowing', 'Easy Run', 'Run/Walk Intervals'],
-    structure: '5 min warmup → 35 min steady state → 5 min cooldown'
+    modalities: ['Erg', 'Running', 'Skiing', 'Other'],
+    structure: '5 min warmup → 35 min steady state → 5 min cooldown',
+    guidance: {
+      general: 'Conversational pace — you can speak in full sentences. Nasal breathing if possible.',
+      erg: 'Keep stroke rate 18-22 spm. Focus on leg drive, not arm pull. Should feel sustainable, not taxing.',
+      running: 'Easy enough to hold a conversation. If you can\'t nose-breathe, slow down.'
+    }
   },
 
   wednesday_pull: {
     id: 'wednesday_pull',
-    day: 2,
-    dayLabel: 'Wed',
     name: 'Upper Body B',
+    shortName: 'UB-B',
     duration: '60 min',
     location: 'gym',
     type: 'lifting',
@@ -112,22 +113,26 @@ const WORKOUTS = {
 
   thursday_hiit: {
     id: 'thursday_hiit',
-    day: 3,
-    dayLabel: 'Thu',
     name: 'HIIT + Mobility',
+    shortName: 'HIIT',
     duration: '45 min',
     location: 'home',
     type: 'cardio',
-    targetHR: '85-90% max HR (intervals)',
-    modalities: ['Rowing', 'Running', 'Cycling'],
-    structure: '5 min warmup → 4×(4 min hard / 3 min easy) → 4 min cooldown → 20 min mobility'
+    cardioMode: 'hiit',
+    targetHR: '85-90% max HR (intervals) / 60% recovery',
+    modalities: ['Erg', 'Running', 'Skiing', 'Other'],
+    structure: '5 min warmup → 4×(4 min hard / 3 min easy) → 4 min cooldown → 20 min mobility',
+    guidance: {
+      general: 'Norwegian 4×4 protocol. Hard intervals should be uncomfortable but sustainable for 4 min.',
+      erg: 'Hard intervals: 24-28 spm, push the pace. Recovery: 18-20 spm, easy.',
+      running: 'Hard intervals: fast but controlled. Recovery: walk or very easy jog.'
+    }
   },
 
   friday_combo: {
     id: 'friday_combo',
-    day: 4,
-    dayLabel: 'Fri',
-    name: 'Upper Push/Pull Combo',
+    name: 'Upper Push/Pull Supersets',
+    shortName: 'SS',
     duration: '45 min',
     location: 'gym',
     type: 'supersets',
@@ -180,22 +185,26 @@ const WORKOUTS = {
 
   saturday_cardio: {
     id: 'saturday_cardio',
-    day: 5,
-    dayLabel: 'Sat',
     name: 'Zone 2 Long Session',
+    shortName: 'Z2+',
     duration: '60 min',
     location: 'home',
     type: 'cardio',
+    cardioMode: 'zone2',
     targetHR: '60-70% max HR',
-    modalities: ['Long Easy Run', 'Rowing', 'Hike / Long Walk'],
-    structure: '60 min continuous at zone 2'
+    modalities: ['Erg', 'Running', 'Skiing', 'Other'],
+    structure: '60 min continuous at zone 2',
+    guidance: {
+      general: 'Conversational pace — you can speak in full sentences. Nasal breathing if possible.',
+      erg: 'Keep stroke rate 18-22 spm. Focus on leg drive, not arm pull. Should feel sustainable, not taxing.',
+      running: 'Easy enough to hold a conversation. If you can\'t nose-breathe, slow down.'
+    }
   },
 
   sunday_recovery: {
     id: 'sunday_recovery',
-    day: 6,
-    dayLabel: 'Sun',
     name: 'Active Recovery',
+    shortName: 'REC',
     duration: '15-30 min',
     location: 'home',
     type: 'recovery',

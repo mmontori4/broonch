@@ -85,12 +85,12 @@ const Trends = {
     grid.innerHTML = '';
 
     const attendance = Store.getAttendance();
-    const dayLabels = ['M', 'T', 'W', 'Th', 'F', 'Sa', 'Su'];
 
-    // Header row
+    // Header row — workout short names
     grid.appendChild(Object.assign(document.createElement('div'), { className: 'att-header', textContent: '' }));
-    for (const d of dayLabels) {
-      grid.appendChild(Object.assign(document.createElement('div'), { className: 'att-header', textContent: d }));
+    for (const wid of WORKOUT_ORDER) {
+      const w = WORKOUTS[wid];
+      grid.appendChild(Object.assign(document.createElement('div'), { className: 'att-header', textContent: w.shortName }));
     }
 
     // Weeks

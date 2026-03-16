@@ -1,8 +1,8 @@
 // ===== RATITO WALLET =====
-// $100 virtual charge per missed workout
+// Manual balance: add charges or pay down with +/- buttons
 
 const Wallet = {
-  COST_PER_MISS: 100,
+  CHARGE_AMOUNT: 100,
 
   init() {
     this.render();
@@ -10,9 +10,9 @@ const Wallet = {
 
   render() {
     const body = document.getElementById('wallet-body');
-    const huelsMissed = Store.getMissedWorkouts('huels');
-    const manootMissed = Store.getMissedWorkouts('manoot');
-    const totalDebt = (huelsMissed + manootMissed) * this.COST_PER_MISS;
+    const huelsBalance = Store.getWalletBalance('huels');
+    const manootBalance = Store.getWalletBalance('manoot');
+    const totalDebt = huelsBalance + manootBalance;
 
     body.innerHTML = `
       <div class="ratito-hero">
@@ -20,27 +20,37 @@ const Wallet = {
         <div class="ratito-msg">${this._getMessage(totalDebt)}</div>
       </div>
       <div class="wallet-cards">
-        ${this._renderCard('huels', 'falco', huelsMissed)}
-        ${this._renderCard('manoot', 'fox', manootMissed)}
+        ${this._renderCard('huels', 'falco', huelsBalance)}
+        ${this._renderCard('manoot', 'fox', manootBalance)}
       </div>
-      <div class="wallet-fine-print">$${this.COST_PER_MISS} per missed workout &middot; past weeks only</div>
+      <div class="wallet-fine-print">tap +/&minus; to adjust &middot; $${this.CHARGE_AMOUNT} per tap</div>
     `;
   },
 
-  _renderCard(user, iconClass, missed) {
-    const debt = missed * this.COST_PER_MISS;
+  _renderCard(user, iconClass, balance) {
+    const hasDebt = balance > 0;
     return `
-      <div class="wallet-card ${missed > 0 ? 'has-debt' : 'clean'}">
+      <div class="wallet-card ${hasDebt ? 'has-debt' : 'clean'}">
         <div class="wallet-user">
           <div class="dash-icon ${iconClass}"></div>
           <span>${user}</span>
         </div>
-        <div class="wallet-stats">
-          <div class="wallet-missed">${missed} missed</div>
-          <div class="wallet-debt">$${debt.toLocaleString()}</div>
+        <div class="wallet-right">
+          <div class="wallet-debt">$${balance.toLocaleString()}</div>
+          <div class="wallet-controls">
+            <button class="wallet-adj-btn wallet-minus" onclick="Wallet.adjust('${user}', -${this.CHARGE_AMOUNT})">&minus;</button>
+            <button class="wallet-adj-btn wallet-plus" onclick="Wallet.adjust('${user}', ${this.CHARGE_AMOUNT})">+</button>
+          </div>
         </div>
       </div>
     `;
+  },
+
+  adjust(user, amount) {
+    const current = Store.getWalletBalance(user);
+    const updated = Math.max(0, current + amount);
+    Store.setWalletBalance(user, updated);
+    this.render();
   },
 
   _getMessage(totalDebt) {

@@ -73,7 +73,7 @@ const Tracker = {
 
     document.getElementById('tracker-title').textContent = w.name;
     document.getElementById('tracker-subtitle').textContent =
-      `${w.dayLabel} \u00b7 ${w.duration} \u00b7 ${w.location === 'gym' ? "Gold's Gym" : 'Home'}`;
+      `${w.duration} \u00b7 ${w.location === 'gym' ? "Gold's Gym" : 'Home'}`;
 
     const body = document.getElementById('tracker-body');
     body.innerHTML = '';
@@ -254,25 +254,44 @@ const Tracker = {
 
   _renderCardio(container, workout, existing, lastEntry) {
     const data = existing ? existing.cardio || {} : (lastEntry ? lastEntry.cardio || {} : {});
+    const isHIIT = workout.cardioMode === 'hiit';
 
     const form = document.createElement('div');
     form.className = 'cardio-form';
 
-    // Modality
+    // Guidance box
+    const guidanceHtml = workout.guidance ? `
+      <div class="form-field guidance-box">
+        <div class="guidance-text">${workout.guidance.general}</div>
+        <div class="guidance-modality" id="guidance-modality"></div>
+      </div>
+    ` : '';
+
+    // Modality buttons
     let modalityHtml = '';
     for (const mod of workout.modalities) {
       const sel = data.modality === mod ? 'selected' : '';
-      modalityHtml += `<button class="modality-btn ${sel}" onclick="Tracker.selectModality(this, '${mod}')">${mod}</button>`;
+      modalityHtml += `<button class="modality-btn ${sel}" onclick="Tracker.selectCardioModality(this, '${mod}')">${mod}</button>`;
     }
 
+    // Structure
+    const structureHtml = `
+      <div class="form-field">
+        <label>Structure</label>
+        <p style="font-size:0.85rem;color:var(--text2)">${workout.structure}</p>
+      </div>
+    `;
+
     form.innerHTML = `
+      ${guidanceHtml}
       <div class="form-field">
         <label>Modality</label>
         <div class="modality-options" id="modality-options">${modalityHtml}</div>
       </div>
+      ${structureHtml}
       <div class="form-field">
         <label for="cardio-duration">Duration (min)</label>
-        <input type="number" inputmode="numeric" id="cardio-duration" placeholder="45" value="${data.duration || ''}">
+        <input type="number" inputmode="numeric" id="cardio-duration" placeholder="${isHIIT ? '45' : workout.duration.replace(' min', '')}" value="${data.duration || ''}">
       </div>
       <div class="form-field">
         <label for="cardio-hr">Avg Heart Rate (bpm)</label>
@@ -281,12 +300,103 @@ const Tracker = {
       <div class="form-field">
         <label>Target: ${workout.targetHR}</label>
       </div>
-      <div class="form-field">
-        <label>Structure</label>
-        <p style="font-size:0.85rem;color:var(--text2)">${workout.structure}</p>
-      </div>
+      <div id="pace-fields"></div>
     `;
     container.appendChild(form);
+
+    // If modality already selected, render its pace fields
+    if (data.modality) {
+      this._renderPaceFields(data.modality, isHIIT, data);
+      this._updateGuidance(data.modality, workout);
+    }
+  },
+
+  selectCardioModality(btn, modality) {
+    btn.closest('.modality-options').querySelectorAll('.modality-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+
+    const workout = this.currentWorkout;
+    const isHIIT = workout.cardioMode === 'hiit';
+
+    // Load existing data for prefill
+    const existing = Store.getWorkoutEntry(workout.id, this.currentWeek);
+    const lastEntry = !existing ? Store.getLastEntry(workout.id) : null;
+    const data = existing ? existing.cardio || {} : (lastEntry ? lastEntry.cardio || {} : {});
+
+    this._renderPaceFields(modality, isHIIT, data);
+    this._updateGuidance(modality, workout);
+  },
+
+  _updateGuidance(modality, workout) {
+    const el = document.getElementById('guidance-modality');
+    if (!el || !workout.guidance) return;
+    const key = modality.toLowerCase();
+    if (workout.guidance[key]) {
+      el.textContent = workout.guidance[key];
+      el.style.display = 'block';
+    } else {
+      el.textContent = '';
+      el.style.display = 'none';
+    }
+  },
+
+  _renderPaceFields(modality, isHIIT, data) {
+    const container = document.getElementById('pace-fields');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const mod = modality.toLowerCase();
+
+    if (mod === 'erg') {
+      if (isHIIT) {
+        container.innerHTML = `
+          <div class="form-field">
+            <label for="erg-interval-split">Interval Split (/500m)</label>
+            <input type="text" inputmode="text" id="erg-interval-split" placeholder="1:50" value="${data.intervalSplit || ''}">
+          </div>
+          <div class="form-field">
+            <label for="erg-recovery-split">Recovery Split (/500m)</label>
+            <input type="text" inputmode="text" id="erg-recovery-split" placeholder="2:20" value="${data.recoverySplit || ''}">
+          </div>
+          <div class="form-field">
+            <label for="erg-spm">Avg Stroke Rate (spm)</label>
+            <input type="number" inputmode="numeric" id="erg-spm" placeholder="26" value="${data.spm || ''}">
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div class="form-field">
+            <label for="erg-split">Avg Split (/500m)</label>
+            <input type="text" inputmode="text" id="erg-split" placeholder="2:15" value="${data.split || ''}">
+          </div>
+          <div class="form-field">
+            <label for="erg-spm">Avg Stroke Rate (spm)</label>
+            <input type="number" inputmode="numeric" id="erg-spm" placeholder="20" value="${data.spm || ''}">
+          </div>
+        `;
+      }
+    } else if (mod === 'running') {
+      if (isHIIT) {
+        container.innerHTML = `
+          <div class="form-field">
+            <label for="run-interval-pace">Interval Pace (min/mile)</label>
+            <input type="text" inputmode="text" id="run-interval-pace" placeholder="7:30" value="${data.intervalPace || ''}">
+          </div>
+          <div class="form-field">
+            <label for="run-recovery-pace">Recovery Pace (min/mile)</label>
+            <input type="text" inputmode="text" id="run-recovery-pace" placeholder="10:00" value="${data.recoveryPace || ''}">
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div class="form-field">
+            <label for="run-pace">Avg Pace (min/mile)</label>
+            <input type="text" inputmode="text" id="run-pace" placeholder="9:30" value="${data.pace || ''}">
+          </div>
+        `;
+      }
+    }
+    // Skiing/Other: no extra pace fields, just HR + duration
   },
 
   selectModality(btn, modality) {
@@ -351,11 +461,44 @@ const Tracker = {
       });
     } else if (w.type === 'cardio') {
       const selectedMod = document.querySelector('.modality-btn.selected');
-      entry.cardio = {
-        modality: selectedMod ? selectedMod.textContent : '',
+      const modality = selectedMod ? selectedMod.textContent : '';
+      const mod = modality.toLowerCase();
+      const isHIIT = w.cardioMode === 'hiit';
+
+      const cardioData = {
+        modality,
         duration: parseInt(document.getElementById('cardio-duration').value) || 0,
         avgHR: parseInt(document.getElementById('cardio-hr').value) || 0
       };
+
+      // Capture pace fields based on modality
+      if (mod === 'erg') {
+        if (isHIIT) {
+          const el1 = document.getElementById('erg-interval-split');
+          const el2 = document.getElementById('erg-recovery-split');
+          const el3 = document.getElementById('erg-spm');
+          if (el1) cardioData.intervalSplit = el1.value.trim();
+          if (el2) cardioData.recoverySplit = el2.value.trim();
+          if (el3) cardioData.spm = parseInt(el3.value) || 0;
+        } else {
+          const el1 = document.getElementById('erg-split');
+          const el2 = document.getElementById('erg-spm');
+          if (el1) cardioData.split = el1.value.trim();
+          if (el2) cardioData.spm = parseInt(el2.value) || 0;
+        }
+      } else if (mod === 'running') {
+        if (isHIIT) {
+          const el1 = document.getElementById('run-interval-pace');
+          const el2 = document.getElementById('run-recovery-pace');
+          if (el1) cardioData.intervalPace = el1.value.trim();
+          if (el2) cardioData.recoveryPace = el2.value.trim();
+        } else {
+          const el1 = document.getElementById('run-pace');
+          if (el1) cardioData.pace = el1.value.trim();
+        }
+      }
+
+      entry.cardio = cardioData;
     } else if (w.type === 'recovery') {
       const selectedAct = document.querySelector('.modality-btn.selected');
       entry.recovery = {
