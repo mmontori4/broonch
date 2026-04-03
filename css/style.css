@@ -768,6 +768,268 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
   color: var(--green);
 }
 
+/* ===== REUNIONS ===== */
+.r-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 20px 20px 12px;
+}
+.r-header-tag {
+  font-size: 0.65rem;
+  letter-spacing: 3px;
+  color: var(--orange);
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+.r-countdown { display: flex; align-items: baseline; gap: 6px; }
+.r-days-num { font-size: 2rem; font-weight: 700; }
+.r-days-label { font-size: 0.85rem; color: var(--text2); }
+.r-header-right { text-align: right; }
+.r-week-label { font-size: 0.7rem; color: var(--text2); letter-spacing: 1px; margin-bottom: 4px; }
+
+/* Sub-tabs */
+.r-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  margin-top: 10px;
+}
+.r-tab {
+  flex: 1;
+  padding: 11px 0;
+  font-size: 0.7rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text2);
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s;
+}
+.r-tab.active {
+  color: var(--orange);
+  font-weight: 700;
+  border-bottom-color: var(--orange);
+}
+
+/* Body */
+.r-body {
+  padding: 16px;
+  padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 16px);
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Today card */
+.r-today-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 14px;
+}
+.r-today-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.r-day-label { font-size: 0.7rem; color: var(--text2); letter-spacing: 2px; }
+.r-status-pill {
+  font-size: 0.6rem; font-weight: 700; letter-spacing: 1.5px;
+  padding: 3px 8px; border-radius: 3px;
+  background: var(--text2)20; color: var(--text2);
+}
+.r-status-pill.done { background: var(--green-dim); color: var(--green); }
+.r-today-name { font-size: 1.3rem; font-weight: 700; }
+.r-today-sub { font-size: 0.85rem; color: var(--orange); margin-top: 2px; }
+.r-today-muscles { font-size: 0.7rem; color: var(--text2); margin-top: 4px; }
+
+/* Tiers */
+.r-tier-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  text-align: left;
+}
+.r-tier-header.tier-go { background: var(--green)10; border: 1px solid var(--green)30; }
+.r-tier-header.tier-caution { background: var(--orange)10; border: 1px solid var(--orange)30; }
+.r-tier-header.tier-unlock { background: var(--blue)10; border: 1px solid var(--blue)30; }
+.r-tier-info { flex: 1; min-width: 0; }
+.r-tier-label {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 1px;
+  display: block;
+}
+.tier-go .r-tier-label, .tier-go { color: var(--green); }
+.tier-caution .r-tier-label, .tier-caution { color: var(--orange); }
+.tier-unlock .r-tier-label, .tier-unlock { color: var(--blue); }
+.r-tier-note { font-size: 0.7rem; color: var(--text2); display: block; margin-top: 2px; }
+.r-tier-arrow { font-size: 0.7rem; color: var(--text2); flex-shrink: 0; margin-left: 8px; }
+
+/* Exercise items */
+.r-exercise {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 14px;
+  margin: 0 0 4px 4px;
+  border-left: 3px solid transparent;
+}
+.r-exercise.tier-go { border-left-color: var(--green)60; }
+.r-exercise.tier-caution { border-left-color: var(--orange)60; }
+.r-exercise.tier-unlock { border-left-color: var(--blue)60; }
+.r-ex-top { display: flex; justify-content: space-between; align-items: center; }
+.r-ex-name { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+.r-ex-sets { font-size: 0.85rem; font-weight: 700; }
+.tier-go .r-ex-sets { color: var(--green); }
+.tier-caution .r-ex-sets { color: var(--orange); }
+.tier-unlock .r-ex-sets { color: var(--blue); }
+.r-ex-note { font-size: 0.7rem; color: var(--text2); margin-top: 3px; }
+
+/* Complete button */
+.r-complete-btn {
+  width: 100%;
+  padding: 14px;
+  margin-top: 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  background: var(--orange);
+  color: #fff;
+}
+.r-complete-btn.done { background: var(--green)40; color: var(--green); }
+.r-complete-btn:active { opacity: 0.8; }
+
+/* Stats row */
+.r-stats {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.r-stat {
+  flex: 1;
+  padding: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  text-align: center;
+}
+.r-stat-val { font-size: 1.2rem; font-weight: 700; }
+.r-stat-label { font-size: 0.55rem; color: var(--text2); letter-spacing: 1px; margin-top: 2px; }
+
+/* Plan view */
+.r-plan-legend {
+  display: flex;
+  gap: 12px;
+  font-size: 0.7rem;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.r-plan-day {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  margin-bottom: 5px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  text-align: left;
+}
+.r-plan-day.is-today { border-color: var(--orange)40; background: var(--orange)08; }
+.r-plan-day-name { font-size: 0.85rem; font-weight: 600; }
+.r-plan-day.is-today .r-plan-day-name { color: var(--orange); }
+.r-plan-day-muscles { font-size: 0.7rem; color: var(--text2); margin-top: 2px; }
+.r-plan-detail { margin-bottom: 10px; padding-left: 4px; }
+.r-plan-tier-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 1.5px; padding: 6px 0 4px; }
+.r-plan-ex {
+  padding: 8px 12px;
+  margin-bottom: 3px;
+  border-left: 2px solid transparent;
+  display: flex;
+  justify-content: space-between;
+}
+.r-plan-ex.tier-go { border-left-color: var(--green)50; }
+.r-plan-ex.tier-caution { border-left-color: var(--orange)50; }
+.r-plan-ex.tier-unlock { border-left-color: var(--blue)50; }
+.r-plan-ex-name { font-size: 0.8rem; }
+.r-plan-ex-sets { font-size: 0.8rem; }
+
+/* Nutrition */
+.r-nutrition, .r-iteration-rules {
+  margin-top: 16px;
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.r-nutrition p, .r-iteration-rules p {
+  font-size: 0.8rem;
+  color: var(--text2);
+  line-height: 1.7;
+  margin: 0 0 6px;
+}
+.r-nutrition strong, .r-iteration-rules strong { color: var(--text); }
+.r-section-title {
+  font-size: 0.7rem;
+  color: var(--orange);
+  letter-spacing: 2px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+/* Check-in form */
+.r-checkin-intro { margin-bottom: 14px; }
+.r-checkin-intro p { font-size: 0.8rem; color: var(--text2); line-height: 1.5; }
+.r-checkin-form { display: flex; flex-direction: column; gap: 10px; }
+.r-field-label {
+  font-size: 0.65rem; font-weight: 600; color: var(--text2);
+  letter-spacing: 1.5px; margin-bottom: -4px;
+}
+.r-checkin-form input, .r-checkin-form textarea {
+  width: 100%; padding: 11px 12px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; font-size: 0.9rem;
+}
+.r-checkin-form textarea { height: 70px; resize: vertical; }
+.r-submit-btn {
+  width: 100%; padding: 14px; margin-top: 6px;
+  background: var(--orange); color: #fff;
+  border-radius: 8px; font-size: 0.85rem; font-weight: 700; letter-spacing: 2px;
+}
+.r-submit-btn:active { opacity: 0.8; }
+
+/* Log */
+.r-empty {
+  padding: 40px 16px;
+  text-align: center;
+  color: var(--text2);
+  font-size: 0.85rem;
+}
+.r-log-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px;
+  margin-bottom: 8px;
+}
+.r-log-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.r-log-date { font-size: 0.65rem; color: var(--text2); }
+.r-log-metrics { display: flex; gap: 14px; flex-wrap: wrap; }
+.r-log-val { font-size: 1rem; font-weight: 700; }
+.r-log-val.hit-target { color: var(--green); }
+.r-log-label { font-size: 0.55rem; color: var(--text2); letter-spacing: 1px; }
+.r-log-notes { font-size: 0.75rem; color: var(--text2); margin-top: 8px; font-style: italic; }
+
 /* ===== UTILITIES ===== */
 .sr-only {
   position: absolute; width: 1px; height: 1px;

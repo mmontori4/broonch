@@ -38,6 +38,7 @@ const Store = {
       entries.push(entry);
     }
     localStorage.setItem(this._key('workouts'), JSON.stringify(entries));
+    if (typeof Sync !== 'undefined') Sync.pushWorkout(entry);
   },
 
   // Get all workout entries for current user
@@ -132,6 +133,7 @@ const Store = {
 
   setWalletBalance(user, amount) {
     localStorage.setItem(`broonch_${user}_wallet`, amount.toString());
+    if (typeof Sync !== 'undefined') Sync.pushWallet(user, amount);
   },
 
   // Get current week number based on plan start date

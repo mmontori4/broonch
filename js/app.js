@@ -4,10 +4,13 @@ const App = {
   currentWeek: 1,
 
   init() {
+    Sync.init();
     const user = Store.getUser();
     if (user) {
       this.currentWeek = Store.getCurrentWeek();
       this._enterDashboard(user);
+      // Background sync
+      Sync.pull(user).catch(() => {});
     }
     // else: profile screen is already active
   },
@@ -24,12 +27,7 @@ const App = {
   },
 
   _enterDashboard(user) {
-    // Set header
-    const icon = document.getElementById('dash-icon');
-    icon.className = 'dash-icon ' + (user === 'huels' ? 'falco' : 'fox');
-    document.getElementById('dash-title').textContent = `sup, ${user}`;
-
-    this._renderWeek();
+    Reunions.init();
     this.showScreen('dashboard');
   },
 
@@ -92,7 +90,7 @@ const App = {
 
     // Refresh data when showing certain screens
     if (name === 'dashboard') {
-      this._renderWeek();
+      Reunions.init();
     } else if (name === 'wallet') {
       Wallet.init();
     } else if (name === 'trends') {

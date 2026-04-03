@@ -30,31 +30,33 @@
     </div>
   </div>
 
-  <!-- Screen 2: Dashboard -->
+  <!-- Screen 2: Reunions Dashboard -->
   <div id="screen-dashboard" class="screen">
-    <header class="dash-header">
-      <div class="dash-greeting">
-        <div class="dash-icon" id="dash-icon"></div>
-        <h1 id="dash-title">sup, broonch</h1>
+    <header class="r-header">
+      <div class="r-header-left">
+        <div class="r-header-tag">ROAD TO REUNIONS</div>
+        <div class="r-countdown">
+          <span id="r-days-left" class="r-days-num">49</span>
+          <span class="r-days-label">days</span>
+        </div>
       </div>
-      <button class="switch-user-btn" onclick="App.switchUser()" title="Switch user">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
-      </button>
+      <div class="r-header-right">
+        <div id="r-week" class="r-week-label">WK 1/7</div>
+        <span id="r-phase" class="phase-badge">REBUILD</span>
+      </div>
     </header>
-
-    <div class="week-selector">
-      <button class="week-btn" onclick="App.changeWeek(-1)">&lsaquo;</button>
-      <div class="week-info">
-        <span id="week-label">Week 1</span>
-        <span id="phase-label" class="phase-badge">Foundation</span>
-      </div>
-      <button class="week-btn" onclick="App.changeWeek(1)">&rsaquo;</button>
-    </div>
-    <div class="week-progress">
-      <div class="week-progress-bar" id="week-progress-bar"></div>
+    <div class="week-progress" style="margin:0 16px 0">
+      <div class="week-progress-bar" id="r-progress"></div>
     </div>
 
-    <div class="workout-grid" id="workout-grid"></div>
+    <div class="r-tabs">
+      <button class="r-tab active" data-view="today" onclick="Reunions.setView('today')">Today</button>
+      <button class="r-tab" data-view="plan" onclick="Reunions.setView('plan')">Plan</button>
+      <button class="r-tab" data-view="checkin" onclick="Reunions.setView('checkin')">Check-in</button>
+      <button class="r-tab" data-view="log" onclick="Reunions.setView('log')">Log</button>
+    </div>
+
+    <div class="r-body" id="r-body"></div>
 
     <nav class="bottom-nav">
       <button class="nav-btn active" data-screen="dashboard" onclick="App.showScreen('dashboard')">
@@ -155,9 +157,11 @@
 
   <script src="js/data.js"></script>
   <script src="js/store.js"></script>
+  <script src="js/sync.js"></script>
   <script src="js/tracker.js"></script>
   <script src="js/wallet.js"></script>
   <script src="js/trends.js"></script>
+  <script src="js/reunions.js"></script>
   <script src="js/app.js"></script>
   <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');</script>
 </body>

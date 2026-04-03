@@ -6,6 +6,9 @@ const Wallet = {
 
   init() {
     this.render();
+    // Pull fresh wallet + workout data from remote, then re-render
+    Promise.all([Sync.pullWallet(), Sync.pull('huels'), Sync.pull('manoot')])
+      .then(() => this.render());
   },
 
   render() {

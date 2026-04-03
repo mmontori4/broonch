@@ -1,13 +1,15 @@
-const CACHE_NAME = 'broonch-v4';
+const CACHE_NAME = 'broonch-v6';
 const ASSETS = [
   './',
   './index.html',
   './css/style.css',
   './js/data.js',
   './js/store.js',
+  './js/sync.js',
   './js/tracker.js',
   './js/wallet.js',
   './js/trends.js',
+  './js/reunions.js',
   './js/app.js',
   './manifest.json',
   './img/falco.png',
@@ -31,6 +33,13 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
+  // Don't cache API calls to Google Apps Script
+  if (e.request.url.includes('script.google.com')) {
+    e.respondWith(fetch(e.request).catch(() =>
+      new Response('{"ok":false}', { headers: { 'Content-Type': 'application/json' } })
+    ));
+    return;
+  }
   e.respondWith(
     caches.match(e.request).then(cached => {
       // Network first for HTML, cache first for everything else
