@@ -1,0 +1,10 @@
+name = "whoop-proxy"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+PWA_URL = "https://mmontori4.github.io/broonch/"
+
+# Set these as secrets (not in this file):
+# npx wrangler secret put WHOOP_CLIENT_ID
+# npx wrangler secret put WHOOP_CLIENT_SECRET

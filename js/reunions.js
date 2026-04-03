@@ -194,7 +194,12 @@ const Reunions = {
   // ===== INIT =====
   init() {
     this._load();
+    Whoop.checkCallback();
     this.render();
+    // Fetch Whoop data in background, re-render when ready
+    if (Whoop.isConnected()) {
+      Whoop.fetchData().then(d => { if (d) this.render(); });
+    }
   },
 
   // ===== MAIN RENDER =====
@@ -247,6 +252,9 @@ const Reunions = {
         <div class="r-today-muscles">${workout.muscles}</div>
       </div>
     `;
+
+    // Whoop status
+    html += this._renderWhoopBar();
 
     // Tiers
     workout.tiers.forEach((tier, ti) => {
@@ -367,7 +375,12 @@ const Reunions = {
 
   // ===== CHECK-IN =====
   _renderCheckin(el, week) {
+    // Auto-fill energy from Whoop recovery
+    const wd = Whoop._cache;
+    const autoEnergy = (wd && wd.recovery) ? Whoop.recoveryToEnergy(wd.recovery.score) : '';
+
     let html = `
+      ${this._renderWhoopCheckin()}
       <div class="r-checkin-intro">
         <div class="r-section-title">WEEKLY CHECK-IN</div>
         <p>Same conditions each week: morning, post-bathroom, pre-food.</p>
@@ -382,8 +395,8 @@ const Reunions = {
         <label class="r-field-label">SHOULDERS (INCHES)</label>
         <input type="number" inputmode="decimal" id="ci-shoulders" placeholder="0" step="0.25">
 
-        <label class="r-field-label">ENERGY (1-10)</label>
-        <input type="number" inputmode="numeric" id="ci-energy" placeholder="0" min="1" max="10">
+        <label class="r-field-label">ENERGY (1-10)${autoEnergy ? ' · Whoop suggests ' + autoEnergy : ''}</label>
+        <input type="number" inputmode="numeric" id="ci-energy" placeholder="0" min="1" max="10" value="${autoEnergy}"
 
         <label class="r-field-label">HEALING COMFORT (1-10)</label>
         <input type="number" inputmode="numeric" id="ci-healing" placeholder="0" min="1" max="10">
@@ -459,6 +472,12 @@ const Reunions = {
               ${ci.energy ? `<div class="r-log-metric"><div class="r-log-val">${ci.energy}/10</div><div class="r-log-label">ENERGY</div></div>` : ''}
               ${ci.healing ? `<div class="r-log-metric"><div class="r-log-val">${ci.healing}/10</div><div class="r-log-label">HEALING</div></div>` : ''}
             </div>
+            ${ci.whoop ? `<div class="r-log-whoop">
+              ${ci.whoop.recovery != null ? `<span>Recovery ${ci.whoop.recovery}%</span>` : ''}
+              ${ci.whoop.hrv != null ? `<span>HRV ${ci.whoop.hrv}</span>` : ''}
+              ${ci.whoop.strain != null ? `<span>Strain ${ci.whoop.strain}</span>` : ''}
+              ${ci.whoop.sleep != null ? `<span>Sleep ${ci.whoop.sleep}h</span>` : ''}
+            </div>` : ''}
             ${ci.notes ? `<div class="r-log-notes">${ci.notes}</div>` : ''}
           </div>
         `;
@@ -466,6 +485,68 @@ const Reunions = {
     }
 
     el.innerHTML = html;
+  },
+
+  // ===== WHOOP =====
+  _renderWhoopBar() {
+    if (!Whoop.isConnected()) {
+      if (!Whoop.WORKER_URL) return '';
+      return `
+        <button class="r-whoop-connect" onclick="Whoop.connect()">
+          Connect Whoop
+        </button>
+      `;
+    }
+
+    const d = Whoop._cache;
+    if (!d || !d.ok) return '<div class="r-whoop-bar"><span class="r-whoop-loading">Loading Whoop...</span></div>';
+
+    let items = '';
+    if (d.recovery) {
+      const c = Whoop.recoveryColor(d.recovery.score);
+      items += `<div class="r-whoop-item"><div class="r-whoop-val" style="color:${c}">${d.recovery.score}%</div><div class="r-whoop-label">RECOVERY</div></div>`;
+      items += `<div class="r-whoop-item"><div class="r-whoop-val">${d.recovery.hrv}</div><div class="r-whoop-label">HRV</div></div>`;
+      items += `<div class="r-whoop-item"><div class="r-whoop-val">${d.recovery.restingHR}</div><div class="r-whoop-label">RHR</div></div>`;
+    }
+    if (d.strain) {
+      items += `<div class="r-whoop-item"><div class="r-whoop-val">${d.strain.score}</div><div class="r-whoop-label">STRAIN</div></div>`;
+    }
+    if (d.sleep) {
+      items += `<div class="r-whoop-item"><div class="r-whoop-val">${d.sleep.hours}h</div><div class="r-whoop-label">SLEEP</div></div>`;
+    }
+
+    return `
+      <div class="r-whoop-bar">
+        <div class="r-whoop-metrics">${items}</div>
+        <button class="r-whoop-disconnect" onclick="Whoop.disconnect();Reunions.render();">✕</button>
+      </div>
+    `;
+  },
+
+  _renderWhoopCheckin() {
+    const d = Whoop._cache;
+    if (!d || !d.ok) return '';
+
+    let html = '<div class="r-whoop-checkin"><div class="r-section-title">FROM WHOOP</div><div class="r-whoop-metrics">';
+
+    if (d.recovery) {
+      const c = Whoop.recoveryColor(d.recovery.score);
+      html += `<div class="r-whoop-item"><div class="r-whoop-val" style="color:${c}">${d.recovery.score}%</div><div class="r-whoop-label">RECOVERY</div></div>`;
+      html += `<div class="r-whoop-item"><div class="r-whoop-val">${d.recovery.hrv}</div><div class="r-whoop-label">HRV</div></div>`;
+      html += `<div class="r-whoop-item"><div class="r-whoop-val">${d.recovery.restingHR}</div><div class="r-whoop-label">RHR</div></div>`;
+      if (d.recovery.spo2) html += `<div class="r-whoop-item"><div class="r-whoop-val">${d.recovery.spo2}%</div><div class="r-whoop-label">SpO2</div></div>`;
+    }
+    if (d.strain) {
+      html += `<div class="r-whoop-item"><div class="r-whoop-val">${d.strain.score}</div><div class="r-whoop-label">STRAIN</div></div>`;
+      html += `<div class="r-whoop-item"><div class="r-whoop-val">${d.strain.cal}</div><div class="r-whoop-label">CAL</div></div>`;
+    }
+    if (d.sleep) {
+      html += `<div class="r-whoop-item"><div class="r-whoop-val">${d.sleep.hours}h</div><div class="r-whoop-label">SLEEP</div></div>`;
+      html += `<div class="r-whoop-item"><div class="r-whoop-val">${d.sleep.quality}%</div><div class="r-whoop-label">QUALITY</div></div>`;
+    }
+
+    html += '</div></div>';
+    return html;
   },
 
   // ===== ACTIONS =====
@@ -502,6 +583,7 @@ const Reunions = {
   },
 
   submitCheckin(week) {
+    const whoopData = Whoop._cache;
     const entry = {
       week,
       date: new Date().toISOString(),
@@ -511,6 +593,13 @@ const Reunions = {
       energy: parseInt(document.getElementById('ci-energy').value) || null,
       healing: parseInt(document.getElementById('ci-healing').value) || null,
       notes: document.getElementById('ci-notes').value.trim() || null,
+      whoop: (whoopData && whoopData.ok) ? {
+        recovery: whoopData.recovery?.score || null,
+        hrv: whoopData.recovery?.hrv || null,
+        restingHR: whoopData.recovery?.restingHR || null,
+        strain: whoopData.strain?.score || null,
+        sleep: whoopData.sleep?.hours || null,
+      } : null,
     };
     this.data.checkins.push(entry);
     this._save();
