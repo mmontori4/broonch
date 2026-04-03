@@ -157,8 +157,9 @@ const Reunions = {
   // ===== STORAGE =====
   _load() {
     try {
-      this.data = JSON.parse(localStorage.getItem('reunions_data')) || { completedDays: [], checkins: [] };
-    } catch { this.data = { completedDays: [], checkins: [] }; }
+      this.data = JSON.parse(localStorage.getItem('reunions_data')) || { completedDays: [], checkins: [], workoutLog: [] };
+      if (!this.data.workoutLog) this.data.workoutLog = [];
+    } catch { this.data = { completedDays: [], checkins: [], workoutLog: [] }; }
   },
 
   _save() {
@@ -408,33 +409,61 @@ const Reunions = {
 
   // ===== LOG =====
   _renderLog(el) {
-    if (this.data.checkins.length === 0) {
-      el.innerHTML = '<div class="r-empty">No check-ins yet. Do your baseline today.</div>';
+    const hasWorkouts = this.data.workoutLog.length > 0;
+    const hasCheckins = this.data.checkins.length > 0;
+
+    if (!hasWorkouts && !hasCheckins) {
+      el.innerHTML = '<div class="r-empty">Nothing logged yet. Mark a workout complete or do a check-in.</div>';
       return;
     }
 
-    let html = '<div class="r-section-title">CHECK-IN HISTORY</div>';
+    let html = '';
 
-    [...this.data.checkins].reverse().forEach(ci => {
-      const vt = this.vtaper(ci);
-      html += `
-        <div class="r-log-card">
-          <div class="r-log-top">
-            <span class="phase-badge">WEEK ${ci.week}</span>
-            <span class="r-log-date">${new Date(ci.date).toLocaleDateString()}</span>
+    // Workout history
+    if (hasWorkouts) {
+      html += '<div class="r-section-title">WORKOUT HISTORY</div>';
+      [...this.data.workoutLog].reverse().forEach(w => {
+        const d = new Date(w.date);
+        const dayStr = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+        html += `
+          <div class="r-wlog-card">
+            <div class="r-wlog-left">
+              <div class="r-wlog-name">${w.name}</div>
+              <div class="r-wlog-sub">${w.subtitle}</div>
+            </div>
+            <div class="r-wlog-right">
+              <div class="r-wlog-date">${dayStr}</div>
+              <div class="r-wlog-day">Day ${w.dayNum + 1} · Wk ${w.week}</div>
+            </div>
           </div>
-          <div class="r-log-metrics">
-            ${ci.weight ? `<div class="r-log-metric"><div class="r-log-val">${ci.weight}</div><div class="r-log-label">LBS</div></div>` : ''}
-            ${ci.waist ? `<div class="r-log-metric"><div class="r-log-val">${ci.waist}"</div><div class="r-log-label">WAIST</div></div>` : ''}
-            ${ci.shoulders ? `<div class="r-log-metric"><div class="r-log-val">${ci.shoulders}"</div><div class="r-log-label">SHLDR</div></div>` : ''}
-            ${vt ? `<div class="r-log-metric"><div class="r-log-val ${parseFloat(vt) >= 1.45 ? 'hit-target' : ''}">${vt}</div><div class="r-log-label">V-TAPER</div></div>` : ''}
-            ${ci.energy ? `<div class="r-log-metric"><div class="r-log-val">${ci.energy}/10</div><div class="r-log-label">ENERGY</div></div>` : ''}
-            ${ci.healing ? `<div class="r-log-metric"><div class="r-log-val">${ci.healing}/10</div><div class="r-log-label">HEALING</div></div>` : ''}
+        `;
+      });
+    }
+
+    // Check-in history
+    if (hasCheckins) {
+      html += `<div class="r-section-title" ${hasWorkouts ? 'style="margin-top:20px"' : ''}>CHECK-IN HISTORY</div>`;
+      [...this.data.checkins].reverse().forEach(ci => {
+        const vt = this.vtaper(ci);
+        html += `
+          <div class="r-log-card">
+            <div class="r-log-top">
+              <span class="phase-badge">WEEK ${ci.week}</span>
+              <span class="r-log-date">${new Date(ci.date).toLocaleDateString()}</span>
+            </div>
+            <div class="r-log-metrics">
+              ${ci.weight ? `<div class="r-log-metric"><div class="r-log-val">${ci.weight}</div><div class="r-log-label">LBS</div></div>` : ''}
+              ${ci.waist ? `<div class="r-log-metric"><div class="r-log-val">${ci.waist}"</div><div class="r-log-label">WAIST</div></div>` : ''}
+              ${ci.shoulders ? `<div class="r-log-metric"><div class="r-log-val">${ci.shoulders}"</div><div class="r-log-label">SHLDR</div></div>` : ''}
+              ${vt ? `<div class="r-log-metric"><div class="r-log-val ${parseFloat(vt) >= 1.45 ? 'hit-target' : ''}">${vt}</div><div class="r-log-label">V-TAPER</div></div>` : ''}
+              ${ci.energy ? `<div class="r-log-metric"><div class="r-log-val">${ci.energy}/10</div><div class="r-log-label">ENERGY</div></div>` : ''}
+              ${ci.healing ? `<div class="r-log-metric"><div class="r-log-val">${ci.healing}/10</div><div class="r-log-label">HEALING</div></div>` : ''}
+            </div>
+            ${ci.notes ? `<div class="r-log-notes">${ci.notes}</div>` : ''}
           </div>
-          ${ci.notes ? `<div class="r-log-notes">${ci.notes}</div>` : ''}
-        </div>
-      `;
-    });
+        `;
+      });
+    }
 
     el.innerHTML = html;
   },
@@ -442,10 +471,20 @@ const Reunions = {
   // ===== ACTIONS =====
   toggleComplete() {
     const d = this.getDayNum();
+    const workout = this.SPLIT[d % 7];
     if (this.isCompleted(d)) {
       this.data.completedDays = this.data.completedDays.filter(x => x !== d);
+      this.data.workoutLog = this.data.workoutLog.filter(x => x.dayNum !== d);
     } else {
       this.data.completedDays.push(d);
+      this.data.workoutLog.push({
+        dayNum: d,
+        date: new Date().toISOString(),
+        name: workout.name,
+        subtitle: workout.subtitle,
+        muscles: workout.muscles,
+        week: this.getWeek(d),
+      });
     }
     this._save();
     this.render();
