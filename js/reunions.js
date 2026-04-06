@@ -11,9 +11,9 @@ const Reunions = {
   START: new Date('2026-04-06T00:00:00'),
 
   PHASES: [
-    { weeks: [1, 2], name: 'REBUILD', desc: 'Max effort upper via cables/machines. Zero heavy bracing.' },
-    { weeks: [3, 4, 5], name: 'RAMP', desc: 'Add free weights, reintroduce legs, push volume.' },
-    { weeks: [6, 7], name: 'PEAK', desc: 'Full intensity. Pump work. Arrive full, not flat.' },
+    { weeks: [1, 2], name: 'REBUILD', desc: 'Max effort upper via cables/machines. Zero heavy bracing.', rpe: '7-8', rpeCue: '2-3 reps left in the tank. Learning weights.' },
+    { weeks: [3, 4, 5], name: 'RAMP', desc: 'Add free weights, reintroduce legs, push volume.', rpe: '8-9', rpeCue: '1-2 reps left. Pushing hard.' },
+    { weeks: [6, 7], name: 'PEAK', desc: 'Full intensity. Pump work. Arrive full, not flat.', rpe: '9-10', rpeCue: 'Last rep is a grind. Leave nothing.' },
   ],
 
   SPLIT: [
@@ -267,6 +267,16 @@ const Reunions = {
         <div class="r-today-muscles">${workout.muscles}</div>
       </div>
     `;
+
+    // RPE banner
+    if (workout.type !== 'recovery') {
+      html += `
+        <div class="r-rpe-banner">
+          <span class="r-rpe-val">RPE ${phase.rpe}</span>
+          <span class="r-rpe-cue">${phase.rpeCue}</span>
+        </div>
+      `;
+    }
 
     // Whoop status
     html += this._renderWhoopBar();

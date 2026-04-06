@@ -868,6 +868,28 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 .r-tier-note { font-size: 0.7rem; color: var(--text2); display: block; margin-top: 2px; }
 .r-tier-arrow { font-size: 0.7rem; color: var(--text2); flex-shrink: 0; margin-left: 8px; }
 
+/* RPE banner */
+.r-rpe-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  background: var(--accent)10;
+  border: 1px solid var(--accent)25;
+}
+.r-rpe-val {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.r-rpe-cue {
+  font-size: 0.7rem;
+  color: var(--text2);
+}
+
 /* Exercise items */
 .r-exercise {
   background: var(--surface);
