@@ -154,6 +154,21 @@ const Reunions = {
     'WEEKS 3+': 'tier-unlock',
   },
 
+  // ===== HELPERS =====
+  _parseSets(str) {
+    // "4×8-10" → 4, "3×AMRAP" → 3, "25-30 min" → null
+    const m = str.match(/^(\d+)\s*[×x]/i);
+    return m ? parseInt(m[1]) : null;
+  },
+
+  _getLastLog(splitIdx) {
+    if (!this.data.workoutLog) return null;
+    const logs = this.data.workoutLog
+      .filter(w => w.dayNum % 7 === splitIdx && w.exercises && w.exercises.length)
+      .sort((a, b) => b.dayNum - a.dayNum);
+    return logs[0] || null;
+  },
+
   // ===== STORAGE =====
   _load() {
     try {
@@ -256,6 +271,13 @@ const Reunions = {
     // Whoop status
     html += this._renderWhoopBar();
 
+    // Prefill from last session of this same split day
+    const lastLog = this._getLastLog(dayNum % 7);
+    const prefillMap = {};
+    if (lastLog && lastLog.exercises) {
+      lastLog.exercises.forEach(e => { prefillMap[e.name] = e.sets; });
+    }
+
     // Tiers
     workout.tiers.forEach((tier, ti) => {
       const key = `today-${ti}`;
@@ -274,15 +296,42 @@ const Reunions = {
 
       if (open) {
         tier.exercises.forEach(ex => {
+          const numSets = this._parseSets(ex.sets);
+          const prefillSets = prefillMap[ex.name];
+
           html += `
-            <div class="r-exercise ${cls}">
+            <div class="r-exercise ${cls}" data-ex-name="${ex.name}">
               <div class="r-ex-top">
                 <span class="r-ex-name">${ex.name}</span>
                 <span class="r-ex-sets">${ex.sets}</span>
               </div>
               <div class="r-ex-note">${ex.note}</div>
-            </div>
           `;
+
+          if (numSets) {
+            html += '<div class="r-sets">';
+            for (let s = 0; s < numSets; s++) {
+              const pf = prefillSets && prefillSets[s];
+              const wv = pf && pf.weight ? pf.weight : '';
+              const rv = pf && pf.reps ? pf.reps : '';
+              html += `
+                <div class="r-set-row">
+                  <span class="r-set-num">${s + 1}</span>
+                  <div class="r-set-field">
+                    <input type="number" inputmode="decimal" class="r-set-wt" placeholder="—" value="${wv}" step="2.5">
+                    <span class="r-set-unit">lbs</span>
+                  </div>
+                  <div class="r-set-field">
+                    <input type="number" inputmode="numeric" class="r-set-rp" placeholder="—" value="${rv}">
+                    <span class="r-set-unit">reps</span>
+                  </div>
+                </div>
+              `;
+            }
+            html += '</div>';
+          }
+
+          html += '</div>';
         });
       }
     });
@@ -558,6 +607,27 @@ const Reunions = {
       this.data.workoutLog = this.data.workoutLog.filter(x => x.dayNum !== d);
     } else {
       this.data.completedDays.push(d);
+
+      // Collect exercise data from inputs
+      const exercises = [];
+      document.querySelectorAll('.r-exercise[data-ex-name]').forEach(el => {
+        const name = el.dataset.exName;
+        const sets = [];
+        el.querySelectorAll('.r-set-row').forEach(row => {
+          const weight = row.querySelector('.r-set-wt').value;
+          const reps = row.querySelector('.r-set-rp').value;
+          if (weight || reps) {
+            sets.push({
+              weight: parseFloat(weight) || 0,
+              reps: parseInt(reps) || 0
+            });
+          }
+        });
+        if (sets.length > 0) {
+          exercises.push({ name, sets });
+        }
+      });
+
       this.data.workoutLog.push({
         dayNum: d,
         date: new Date().toISOString(),
@@ -565,6 +635,7 @@ const Reunions = {
         subtitle: workout.subtitle,
         muscles: workout.muscles,
         week: this.getWeek(d),
+        exercises,
       });
     }
     this._save();

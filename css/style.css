@@ -888,6 +888,49 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 .tier-unlock .r-ex-sets { color: var(--blue); }
 .r-ex-note { font-size: 0.7rem; color: var(--text2); margin-top: 3px; }
 
+/* Set input rows */
+.r-sets { margin-top: 8px; }
+.r-set-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.r-set-num {
+  width: 20px;
+  font-size: 0.7rem;
+  color: var(--text2);
+  font-weight: 600;
+  text-align: center;
+  flex-shrink: 0;
+}
+.r-set-field {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.r-set-field input {
+  width: 60px;
+  height: 36px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+}
+.r-set-field input:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+.r-set-unit {
+  font-size: 0.6rem;
+  color: var(--text2);
+  text-transform: uppercase;
+  width: 24px;
+}
+
 /* Complete button */
 .r-complete-btn {
   width: 100%;
