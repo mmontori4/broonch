@@ -8,7 +8,7 @@ const Reunions = {
   collapsedTiers: {},
 
   TARGET: new Date('2026-05-21T00:00:00'),
-  START: new Date('2026-04-02T00:00:00'),
+  START: new Date('2026-04-06T00:00:00'),
 
   PHASES: [
     { weeks: [1, 2], name: 'REBUILD', desc: 'Max effort upper via cables/machines. Zero heavy bracing.' },
