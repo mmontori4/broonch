@@ -5,158 +5,99 @@ const Reunions = {
   view: 'today',
   data: null,
   expandedDay: null,
-  collapsedTiers: {},
 
   TARGET: new Date('2026-05-21T00:00:00'),
   START: new Date('2026-04-06T00:00:00'),
 
   PHASES: [
-    { weeks: [1, 2], name: 'REBUILD', desc: 'Max effort upper via cables/machines. Zero heavy bracing.', rpe: '7-8', rpeCue: '2-3 reps left in the tank. Learning weights.' },
-    { weeks: [3, 4, 5], name: 'RAMP', desc: 'Add free weights, reintroduce legs, push volume.', rpe: '8-9', rpeCue: '1-2 reps left. Pushing hard.' },
-    { weeks: [6, 7], name: 'PEAK', desc: 'Full intensity. Pump work. Arrive full, not flat.', rpe: '9-10', rpeCue: 'Last rep is a grind. Leave nothing.' },
+    { weeks: [1, 2], name: 'REBUILD', rpe: '7-8', rpeCue: '2-3 reps left in the tank. Learning weights.', desc: 'Full upper body. Legs: machines only (extensions, curls, calves).' },
+    { weeks: [3, 4, 5], name: 'RAMP', rpe: '8-9', rpeCue: '1-2 reps left. Pushing hard.', desc: 'Add compound legs (leg press). Push upper body weights up.' },
+    { weeks: [6, 7], name: 'PEAK', rpe: '9-10', rpeCue: 'Last rep is a grind. Leave nothing.', desc: 'Full intensity. Heavy legs if cleared. Taper into Reunions.' },
   ],
 
   SPLIT: [
     {
       name: 'PUSH A', subtitle: 'Chest & Shoulders', muscles: 'Chest · Delts · Triceps', type: 'lifting',
-      tiers: [
-        { label: 'GO HARD', note: 'No core bracing needed. Max effort.', exercises: [
-          { name: 'Machine Chest Press', sets: '4×8-10', note: 'Go heavy, the machine catches it' },
-          { name: 'Cable Flyes (low-to-high)', sets: '4×12-15', note: 'Squeeze 1s at peak' },
-          { name: 'Lateral Raises (cable)', sets: '4×12-15', note: 'Slight lean away, slow negative' },
-          { name: 'Machine Shoulder Press', sets: '3×8-10', note: 'Push hard, controlled descent' },
-          { name: 'Rope Pushdowns', sets: '3×12-15', note: 'Split at bottom, squeeze tris' },
-        ]},
-        { label: 'IF FEELING GOOD', note: 'Light bracing. Stop if any pelvic pressure.', exercises: [
-          { name: 'Incline DB Press (30°)', sets: '3×10-12', note: 'Moderate weight, no straining' },
-          { name: 'Overhead Tricep Extension (cable)', sets: '3×10-12', note: 'Standing, controlled' },
-        ]},
-        { label: 'WEEKS 3+', note: 'Reintroduce as healing allows.', exercises: [
-          { name: 'Flat Barbell Bench', sets: '3×8-10', note: 'Moderate bracing okay by now' },
-          { name: 'Dips (chest emphasis)', sets: '3×8-12', note: 'Forward lean, bodyweight first' },
-        ]},
+      exercises: [
+        { name: 'Barbell Bench Press', sets: '4×6-8', note: 'Controlled descent, drive through' },
+        { name: 'Incline DB Press (30°)', sets: '3×10-12', note: 'Upper chest emphasis' },
+        { name: 'Cable Flyes (low-to-high)', sets: '3×12-15', note: 'Squeeze 1s at peak' },
+        { name: 'Machine Shoulder Press', sets: '3×8-10', note: 'Push hard, controlled descent' },
+        { name: 'Cable Lateral Raise', sets: '4×12-15', note: 'Slight lean away, slow negative' },
+        { name: 'Rope Pushdowns', sets: '3×12-15', note: 'Split at bottom, squeeze tris' },
       ],
     },
     {
       name: 'PULL A', subtitle: 'Back Width & Biceps', muscles: 'Lats · Rear Delts · Biceps', type: 'lifting',
-      tiers: [
-        { label: 'GO HARD', note: 'All cable/machine. Send it.', exercises: [
-          { name: 'Lat Pulldown (wide)', sets: '4×8-10', note: 'Full stretch, squeeze at bottom' },
-          { name: 'Seated Cable Row', sets: '4×10-12', note: 'Squeeze shoulder blades' },
-          { name: 'Face Pulls', sets: '4×15-20', note: 'External rotate at top. Posture gains.' },
-          { name: 'Incline DB Curl', sets: '3×10-12', note: 'Full stretch at bottom' },
-          { name: 'Hammer Curls (standing)', sets: '3×12-15', note: 'Brachialis = arm width' },
-        ]},
-        { label: 'IF FEELING GOOD', note: 'Slightly more core engagement.', exercises: [
-          { name: 'Single-Arm Cable Row', sets: '3×10-12/arm', note: 'Standing, brace lightly' },
-          { name: 'Straight-Arm Pulldown', sets: '3×12-15', note: 'Lat isolation, no core load' },
-        ]},
-        { label: 'WEEKS 3+', note: 'Free weight rows when ready.', exercises: [
-          { name: 'Chest-Supported DB Row', sets: '3×10-12', note: 'Bench supports you — minimal core' },
-          { name: 'Pull-ups / Assisted', sets: '3×AMRAP', note: 'Add weight when ready' },
-        ]},
+      exercises: [
+        { name: 'Pull-ups (weighted if able)', sets: '4×6-10', note: 'Add weight when bodyweight is easy' },
+        { name: 'Seated Cable Row', sets: '4×10-12', note: 'Squeeze shoulder blades' },
+        { name: 'Lat Pulldown (wide)', sets: '3×10-12', note: 'Full stretch at top' },
+        { name: 'Face Pulls', sets: '3×15-20', note: 'External rotate at top. Posture gains.' },
+        { name: 'Incline DB Curl', sets: '3×10-12', note: 'Full stretch at bottom' },
+        { name: 'Hammer Curls', sets: '3×12-15', note: 'Brachialis = arm width' },
       ],
     },
     {
       name: 'ARMS & DELTS', subtitle: 'Vanity Day', muscles: 'Biceps · Triceps · All 3 Delt Heads', type: 'lifting',
-      tiers: [
-        { label: 'GO HARD', note: 'Pure isolation. Zero core. Absolute green light.', exercises: [
-          { name: 'Cable Lateral Raise', sets: '4×12-15', note: 'Behind-body angle. Money exercise.' },
-          { name: 'Rear Delt Fly (pec deck reverse)', sets: '4×15-20', note: 'Light, high rep, full squeeze' },
-          { name: 'Cable Curl (bar)', sets: '4×10-12', note: 'Strict, no swing' },
-          { name: 'Spider Curls (incline bench)', sets: '3×12-15', note: 'Peak contraction focus' },
-          { name: 'Overhead Cable Extension', sets: '4×10-12', note: 'Long head stretch' },
-          { name: 'Reverse Grip Pushdown', sets: '3×12-15', note: 'Medial head, arm detail' },
-        ]},
-        { label: 'IF FEELING GOOD', note: 'More volume. Still zero core.', exercises: [
-          { name: 'Machine Lateral Raise', sets: '3×12-15', note: 'If gym has one — great isolation' },
-          { name: 'Concentration Curl', sets: '2×12-15', note: 'Peak squeeze' },
-          { name: 'Reverse Curl (EZ bar)', sets: '2×12-15', note: 'Forearm pop' },
-        ]},
+      exercises: [
+        { name: 'Cable Lateral Raise', sets: '4×12-15', note: 'Behind-body angle. Money exercise.' },
+        { name: 'Rear Delt Fly (pec deck reverse)', sets: '4×15-20', note: 'Light, high rep, full squeeze' },
+        { name: 'Cable Curl (bar)', sets: '4×10-12', note: 'Strict, no swing' },
+        { name: 'Spider Curls (incline bench)', sets: '3×12-15', note: 'Peak contraction focus' },
+        { name: 'Overhead Cable Extension', sets: '4×10-12', note: 'Long head stretch' },
+        { name: 'Reverse Grip Pushdown', sets: '3×12-15', note: 'Medial head, arm detail' },
+        { name: 'Reverse Curl (EZ bar)', sets: '2×12-15', note: 'Forearm pop' },
       ],
     },
     {
-      name: 'PUSH B', subtitle: 'Shoulder Emphasis', muscles: 'Delts · Chest · Triceps', type: 'lifting',
-      tiers: [
-        { label: 'GO HARD', note: 'Shoulders are #1 aesthetics muscle. Hammer them.', exercises: [
-          { name: 'Machine Shoulder Press', sets: '4×8-10', note: 'Go heavy here' },
-          { name: 'Cable Lateral Raise', sets: '5×12-15', note: '5 sets. This is the move.' },
-          { name: 'Cable Chest Fly (mid-height)', sets: '4×12-15', note: 'Constant tension' },
-          { name: 'Tricep Dip Machine', sets: '3×10-12', note: 'If available, otherwise pushdowns' },
-          { name: 'Front Raise (cable)', sets: '3×12-15', note: 'Anterior delt cap' },
-        ]},
-        { label: 'IF FEELING GOOD', note: 'Add pressing volume.', exercises: [
-          { name: 'Seated DB Shoulder Press', sets: '3×10-12', note: 'Light brace, supported back' },
-          { name: 'Pec Deck', sets: '3×12-15', note: 'Inner chest squeeze' },
-        ]},
-        { label: 'WEEKS 3+', note: 'Free weight pressing.', exercises: [
-          { name: 'Standing OHP (barbell)', sets: '3×6-8', note: 'Only when bracing feels normal' },
-        ]},
+      name: 'PUSH B', subtitle: 'Shoulder Focus', muscles: 'Delts · Chest · Triceps', type: 'lifting',
+      exercises: [
+        { name: 'Seated DB Shoulder Press', sets: '4×8-10', note: 'Supported back, go heavy' },
+        { name: 'Cable Lateral Raise', sets: '5×12-15', note: '5 sets. This is the move.' },
+        { name: 'Cable Chest Fly (mid-height)', sets: '4×12-15', note: 'Constant tension' },
+        { name: 'Front Raise (cable)', sets: '3×12-15', note: 'Anterior delt cap' },
+        { name: 'Dips (chest emphasis)', sets: '3×8-12', note: 'Forward lean' },
+        { name: 'Rope Pushdowns', sets: '3×12-15', note: 'Squeeze tris' },
       ],
     },
     {
       name: 'PULL B', subtitle: 'Back Thickness & Arms', muscles: 'Rhomboids · Traps · Biceps · Forearms', type: 'lifting',
-      tiers: [
-        { label: 'GO HARD', note: 'Machine/cable pulling. Full send.', exercises: [
-          { name: 'Lat Pulldown (close/neutral)', sets: '4×10-12', note: 'Lean back slightly' },
-          { name: 'Machine Row (chest supported)', sets: '4×10-12', note: 'Squeeze at contraction' },
-          { name: 'Cable Shrug', sets: '3×12-15', note: 'Trap thickness, hold at top' },
-          { name: 'Barbell Curl (standing)', sets: '4×8-10', note: 'Strict form, no swing' },
-          { name: 'Hammer Curl (rope cable)', sets: '3×12-15', note: 'Constant tension variant' },
-        ]},
-        { label: 'IF FEELING GOOD', note: 'Add volume and detail work.', exercises: [
-          { name: 'Straight-Arm Pulldown', sets: '3×12-15', note: 'Lat sweep' },
-          { name: 'Reverse Curl', sets: '2×12-15', note: 'Forearm pop' },
-        ]},
-        { label: 'WEEKS 3+', note: 'Heavier free weight pulling.', exercises: [
-          { name: 'Chest-Supported T-Bar Row', sets: '3×8-10', note: 'Bench takes the load' },
-          { name: 'Weighted Pull-ups', sets: '3×6-8', note: 'When core is solid' },
-        ]},
+      exercises: [
+        { name: 'Chest-Supported T-Bar Row', sets: '4×8-10', note: 'Bench takes the load — go heavy' },
+        { name: 'Lat Pulldown (close/neutral)', sets: '4×10-12', note: 'Lean back slightly' },
+        { name: 'Chest-Supported DB Row', sets: '3×10-12', note: 'Unilateral, full squeeze' },
+        { name: 'Cable Shrug', sets: '3×12-15', note: 'Hold at top, trap thickness' },
+        { name: 'Barbell Curl', sets: '3×8-10', note: 'Strict form, no swing' },
+        { name: 'Hammer Curl (rope cable)', sets: '3×12-15', note: 'Constant tension variant' },
       ],
     },
     {
-      name: 'PUMP + CARDIO', subtitle: 'Conditioning & Weak Points', muscles: 'Full Body Pump · Fat Burn', type: 'conditioning',
-      tiers: [
-        { label: 'GO HARD', note: 'Walking is king for recovery + fat loss. Pump work is all cables.', exercises: [
-          { name: 'Incline Walk (treadmill)', sets: '25-30 min', note: '12-15% incline, 3.0-3.5 mph' },
-          { name: 'Cable Lateral Raise', sets: '3×20', note: 'Light, chase the burn' },
-          { name: 'Cable Curl', sets: '3×20', note: 'Light, constant tension' },
-          { name: 'Pushdowns', sets: '3×20', note: 'Light, blood flow' },
-          { name: 'Face Pulls', sets: '3×20', note: 'Posture + rear delt pump' },
-        ]},
-        { label: 'IF FEELING GOOD', note: 'More conditioning if energy is there.', exercises: [
-          { name: 'Pushup Variations', sets: '3×AMRAP', note: 'Diamond → standard → wide' },
-          { name: 'Standing Cable Crunch', sets: '3×15', note: 'Core without pelvic floor load' },
-        ]},
-        { label: 'WEEKS 3+', note: 'Leg work as tolerated.', exercises: [
-          { name: 'Leg Extension', sets: '3×12-15', note: 'Quad pump, no pelvic pressure' },
-          { name: 'Leg Curl (lying)', sets: '3×12-15', note: 'Hamstrings, pad position permitting' },
-          { name: 'Standing Calf Raise', sets: '3×15-20', note: 'No core load' },
-        ]},
+      name: 'LEGS + PUMP', subtitle: 'Lower Body & Conditioning', muscles: 'Quads · Hamstrings · Calves · Full Pump', type: 'conditioning',
+      exercises: [
+        { name: 'Leg Extension', sets: '4×12-15', note: 'Quad isolation, no pelvic load' },
+        { name: 'Leg Curl (lying)', sets: '4×12-15', note: 'Hamstrings, zero core demand' },
+        { name: 'Leg Press', sets: '3×10-12', note: 'Introduce week 3+. Moderate depth.' },
+        { name: 'Hack Squat', sets: '3×8-10', note: 'Week 5+ when cleared for heavy bracing' },
+        { name: 'Standing Calf Raise', sets: '4×15-20', note: 'Full stretch at bottom' },
+        { name: 'Incline Walk (treadmill)', sets: '20 min', note: '12-15% incline, 3.0-3.5 mph' },
+        { name: 'Cable Lateral Raise', sets: '3×20', note: 'Light, chase the burn' },
+        { name: 'Cable Curl', sets: '3×20', note: 'Light, constant tension' },
+        { name: 'Pushdowns', sets: '3×20', note: 'Light, blood flow' },
       ],
     },
     {
-      name: 'REST', subtitle: 'Active Recovery', muscles: 'Recovery · Mobility · Healing', type: 'recovery',
-      tiers: [
-        { label: 'DO THIS', note: 'Non-negotiable recovery work.', exercises: [
-          { name: 'Walk (outside)', sets: '30-45 min', note: 'Zone 2. Circulation aids healing.' },
-          { name: 'Upper Body Stretching', sets: '10 min', note: 'Chest doorway stretch, shoulder CARs' },
-          { name: 'Foam Roll (upper back)', sets: '5 min', note: 'Thoracic extension' },
-        ]},
+      name: 'REST', subtitle: 'Active Recovery', muscles: 'Recovery · Mobility', type: 'recovery',
+      exercises: [
+        { name: 'Walk (outside)', sets: '30-45 min', note: 'Zone 2. Circulation aids healing.' },
+        { name: 'Upper Body Stretching', sets: '10 min', note: 'Chest doorway stretch, shoulder CARs' },
+        { name: 'Foam Roll (upper back)', sets: '5 min', note: 'Thoracic extension' },
       ],
     },
   ],
 
-  TIER_CLASS: {
-    'GO HARD': 'tier-go',
-    'DO THIS': 'tier-go',
-    'IF FEELING GOOD': 'tier-caution',
-    'WEEKS 3+': 'tier-unlock',
-  },
-
   // ===== HELPERS =====
   _parseSets(str) {
-    // "4×8-10" → 4, "3×AMRAP" → 3, "25-30 min" → null
     const m = str.match(/^(\d+)\s*[×x]/i);
     return m ? parseInt(m[1]) : null;
   },
@@ -209,12 +150,7 @@ const Reunions = {
   // ===== INIT =====
   init() {
     this._load();
-    Whoop.checkCallback();
     this.render();
-    // Fetch Whoop data in background, re-render when ready
-    if (Whoop.isConnected()) {
-      Whoop.fetchData().then(d => { if (d) this.render(); });
-    }
   },
 
   // ===== MAIN RENDER =====
@@ -278,9 +214,6 @@ const Reunions = {
       `;
     }
 
-    // Whoop status
-    html += this._renderWhoopBar();
-
     // Prefill from last session of this same split day
     const lastLog = this._getLastLog(dayNum % 7);
     const prefillMap = {};
@@ -288,62 +221,44 @@ const Reunions = {
       lastLog.exercises.forEach(e => { prefillMap[e.name] = e.sets; });
     }
 
-    // Tiers
-    workout.tiers.forEach((tier, ti) => {
-      const key = `today-${ti}`;
-      const open = this.collapsedTiers[key] !== true;
-      const cls = this.TIER_CLASS[tier.label] || 'tier-go';
+    // Exercises
+    workout.exercises.forEach(ex => {
+      const numSets = this._parseSets(ex.sets);
+      const prefillSets = prefillMap[ex.name];
 
       html += `
-        <button class="r-tier-header ${cls}" onclick="Reunions.toggleTier('${key}')">
-          <div class="r-tier-info">
-            <span class="r-tier-label">${tier.label}</span>
-            <span class="r-tier-note">${tier.note}</span>
+        <div class="r-exercise" data-ex-name="${ex.name}">
+          <div class="r-ex-top">
+            <span class="r-ex-name">${ex.name}</span>
+            <span class="r-ex-sets">${ex.sets}</span>
           </div>
-          <span class="r-tier-arrow">${open ? '▾' : '▸'}</span>
-        </button>
+          <div class="r-ex-note">${ex.note}</div>
       `;
 
-      if (open) {
-        tier.exercises.forEach(ex => {
-          const numSets = this._parseSets(ex.sets);
-          const prefillSets = prefillMap[ex.name];
-
+      if (numSets) {
+        html += '<div class="r-sets">';
+        for (let s = 0; s < numSets; s++) {
+          const pf = prefillSets && prefillSets[s];
+          const wv = pf && pf.weight ? pf.weight : '';
+          const rv = pf && pf.reps ? pf.reps : '';
           html += `
-            <div class="r-exercise ${cls}" data-ex-name="${ex.name}">
-              <div class="r-ex-top">
-                <span class="r-ex-name">${ex.name}</span>
-                <span class="r-ex-sets">${ex.sets}</span>
+            <div class="r-set-row">
+              <span class="r-set-num">${s + 1}</span>
+              <div class="r-set-field">
+                <input type="number" inputmode="decimal" class="r-set-wt" placeholder="—" value="${wv}" step="2.5">
+                <span class="r-set-unit">lbs</span>
               </div>
-              <div class="r-ex-note">${ex.note}</div>
+              <div class="r-set-field">
+                <input type="number" inputmode="numeric" class="r-set-rp" placeholder="—" value="${rv}">
+                <span class="r-set-unit">reps</span>
+              </div>
+            </div>
           `;
-
-          if (numSets) {
-            html += '<div class="r-sets">';
-            for (let s = 0; s < numSets; s++) {
-              const pf = prefillSets && prefillSets[s];
-              const wv = pf && pf.weight ? pf.weight : '';
-              const rv = pf && pf.reps ? pf.reps : '';
-              html += `
-                <div class="r-set-row">
-                  <span class="r-set-num">${s + 1}</span>
-                  <div class="r-set-field">
-                    <input type="number" inputmode="decimal" class="r-set-wt" placeholder="—" value="${wv}" step="2.5">
-                    <span class="r-set-unit">lbs</span>
-                  </div>
-                  <div class="r-set-field">
-                    <input type="number" inputmode="numeric" class="r-set-rp" placeholder="—" value="${rv}">
-                    <span class="r-set-unit">reps</span>
-                  </div>
-                </div>
-              `;
-            }
-            html += '</div>';
-          }
-
-          html += '</div>';
-        });
+        }
+        html += '</div>';
       }
+
+      html += '</div>';
     });
 
     // Mark complete button
@@ -377,14 +292,20 @@ const Reunions = {
   // ===== PLAN =====
   _renderPlan(el, dayNum) {
     const todayIdx = dayNum % 7;
+    const week = this.getWeek(dayNum);
+    const currentPhase = this.getPhase(week);
 
-    let html = `
-      <div class="r-plan-legend">
-        <span class="tier-go">● Go hard</span>
-        <span class="tier-caution">● If feeling good</span>
-        <span class="tier-unlock">● Weeks 3+</span>
-      </div>
-    `;
+    let html = '<div class="r-plan-phases">';
+    this.PHASES.forEach(p => {
+      const isCurrent = p === currentPhase;
+      html += `
+        <div class="r-phase-row ${isCurrent ? 'current' : ''}">
+          <span class="phase-badge ${isCurrent ? 'current' : ''}">${p.name}</span>
+          <span class="r-phase-desc">Wk ${p.weeks[0]}-${p.weeks[p.weeks.length - 1]} · RPE ${p.rpe} · ${p.desc}</span>
+        </div>
+      `;
+    });
+    html += '</div>';
 
     this.SPLIT.forEach((day, i) => {
       const isToday = i === todayIdx;
@@ -402,17 +323,13 @@ const Reunions = {
 
       if (expanded) {
         html += '<div class="r-plan-detail">';
-        day.tiers.forEach(tier => {
-          const cls = this.TIER_CLASS[tier.label] || 'tier-go';
-          html += `<div class="r-plan-tier-label ${cls}">${tier.label}</div>`;
-          tier.exercises.forEach(ex => {
-            html += `
-              <div class="r-plan-ex ${cls}">
-                <span class="r-plan-ex-name">${ex.name}</span>
-                <span class="r-plan-ex-sets">${ex.sets}</span>
-              </div>
-            `;
-          });
+        day.exercises.forEach(ex => {
+          html += `
+            <div class="r-plan-ex">
+              <span class="r-plan-ex-name">${ex.name}</span>
+              <span class="r-plan-ex-sets">${ex.sets}</span>
+            </div>
+          `;
         });
         html += '</div>';
       }
@@ -429,17 +346,23 @@ const Reunions = {
       </div>
     `;
 
+    // Legs recovery timeline
+    html += `
+      <div class="r-nutrition">
+        <div class="r-section-title">LEGS RECOVERY TIMELINE</div>
+        <p><strong>Weeks 1-2:</strong> Machines only — extensions, curls, calves. No heavy bracing.</p>
+        <p><strong>Weeks 3-4:</strong> Add leg press, moderate compounds. Light-moderate bracing OK.</p>
+        <p><strong>Weeks 5+:</strong> Hack squat, heavier compounds if wound is closed and pain-free.</p>
+        <p><strong>Listen to the site:</strong> Any bleeding or pressure → drop the exercise, wait a week.</p>
+      </div>
+    `;
+
     el.innerHTML = html;
   },
 
   // ===== CHECK-IN =====
   _renderCheckin(el, week) {
-    // Auto-fill energy from Whoop recovery
-    const wd = Whoop._cache;
-    const autoEnergy = (wd && wd.recovery) ? Whoop.recoveryToEnergy(wd.recovery.score) : '';
-
     let html = `
-      ${this._renderWhoopCheckin()}
       <div class="r-checkin-intro">
         <div class="r-section-title">WEEKLY CHECK-IN</div>
         <p>Same conditions each week: morning, post-bathroom, pre-food.</p>
@@ -454,8 +377,8 @@ const Reunions = {
         <label class="r-field-label">SHOULDERS (INCHES)</label>
         <input type="number" inputmode="decimal" id="ci-shoulders" placeholder="0" step="0.25">
 
-        <label class="r-field-label">ENERGY (1-10)${autoEnergy ? ' · Whoop suggests ' + autoEnergy : ''}</label>
-        <input type="number" inputmode="numeric" id="ci-energy" placeholder="0" min="1" max="10" value="${autoEnergy}"
+        <label class="r-field-label">ENERGY (1-10)</label>
+        <input type="number" inputmode="numeric" id="ci-energy" placeholder="0" min="1" max="10">
 
         <label class="r-field-label">HEALING COMFORT (1-10)</label>
         <input type="number" inputmode="numeric" id="ci-healing" placeholder="0" min="1" max="10">
@@ -472,7 +395,7 @@ const Reunions = {
         <p><strong>Weight dropping >2 lbs/wk?</strong> Add 200 cal.</p>
         <p><strong>Nothing moving?</strong> Cut 200 cal or add 10 min walking.</p>
         <p><strong>V-taper ratio?</strong> Shoulders÷waist. Target >1.45.</p>
-        <p><strong>Healing comfort ↑?</strong> Unlock next tier.</p>
+        <p><strong>Healing comfort ↑?</strong> Unlock next leg phase.</p>
       </div>
     `;
 
@@ -531,12 +454,6 @@ const Reunions = {
               ${ci.energy ? `<div class="r-log-metric"><div class="r-log-val">${ci.energy}/10</div><div class="r-log-label">ENERGY</div></div>` : ''}
               ${ci.healing ? `<div class="r-log-metric"><div class="r-log-val">${ci.healing}/10</div><div class="r-log-label">HEALING</div></div>` : ''}
             </div>
-            ${ci.whoop ? `<div class="r-log-whoop">
-              ${ci.whoop.recovery != null ? `<span>Recovery ${ci.whoop.recovery}%</span>` : ''}
-              ${ci.whoop.hrv != null ? `<span>HRV ${ci.whoop.hrv}</span>` : ''}
-              ${ci.whoop.strain != null ? `<span>Strain ${ci.whoop.strain}</span>` : ''}
-              ${ci.whoop.sleep != null ? `<span>Sleep ${ci.whoop.sleep}h</span>` : ''}
-            </div>` : ''}
             ${ci.notes ? `<div class="r-log-notes">${ci.notes}</div>` : ''}
           </div>
         `;
@@ -544,68 +461,6 @@ const Reunions = {
     }
 
     el.innerHTML = html;
-  },
-
-  // ===== WHOOP =====
-  _renderWhoopBar() {
-    if (!Whoop.isConnected()) {
-      if (!Whoop.WORKER_URL) return '';
-      return `
-        <button class="r-whoop-connect" onclick="Whoop.connect()">
-          Connect Whoop
-        </button>
-      `;
-    }
-
-    const d = Whoop._cache;
-    if (!d || !d.ok) return '<div class="r-whoop-bar"><span class="r-whoop-loading">Loading Whoop...</span></div>';
-
-    let items = '';
-    if (d.recovery) {
-      const c = Whoop.recoveryColor(d.recovery.score);
-      items += `<div class="r-whoop-item"><div class="r-whoop-val" style="color:${c}">${d.recovery.score}%</div><div class="r-whoop-label">RECOVERY</div></div>`;
-      items += `<div class="r-whoop-item"><div class="r-whoop-val">${d.recovery.hrv}</div><div class="r-whoop-label">HRV</div></div>`;
-      items += `<div class="r-whoop-item"><div class="r-whoop-val">${d.recovery.restingHR}</div><div class="r-whoop-label">RHR</div></div>`;
-    }
-    if (d.strain) {
-      items += `<div class="r-whoop-item"><div class="r-whoop-val">${d.strain.score}</div><div class="r-whoop-label">STRAIN</div></div>`;
-    }
-    if (d.sleep) {
-      items += `<div class="r-whoop-item"><div class="r-whoop-val">${d.sleep.hours}h</div><div class="r-whoop-label">SLEEP</div></div>`;
-    }
-
-    return `
-      <div class="r-whoop-bar">
-        <div class="r-whoop-metrics">${items}</div>
-        <button class="r-whoop-disconnect" onclick="Whoop.disconnect();Reunions.render();">✕</button>
-      </div>
-    `;
-  },
-
-  _renderWhoopCheckin() {
-    const d = Whoop._cache;
-    if (!d || !d.ok) return '';
-
-    let html = '<div class="r-whoop-checkin"><div class="r-section-title">FROM WHOOP</div><div class="r-whoop-metrics">';
-
-    if (d.recovery) {
-      const c = Whoop.recoveryColor(d.recovery.score);
-      html += `<div class="r-whoop-item"><div class="r-whoop-val" style="color:${c}">${d.recovery.score}%</div><div class="r-whoop-label">RECOVERY</div></div>`;
-      html += `<div class="r-whoop-item"><div class="r-whoop-val">${d.recovery.hrv}</div><div class="r-whoop-label">HRV</div></div>`;
-      html += `<div class="r-whoop-item"><div class="r-whoop-val">${d.recovery.restingHR}</div><div class="r-whoop-label">RHR</div></div>`;
-      if (d.recovery.spo2) html += `<div class="r-whoop-item"><div class="r-whoop-val">${d.recovery.spo2}%</div><div class="r-whoop-label">SpO2</div></div>`;
-    }
-    if (d.strain) {
-      html += `<div class="r-whoop-item"><div class="r-whoop-val">${d.strain.score}</div><div class="r-whoop-label">STRAIN</div></div>`;
-      html += `<div class="r-whoop-item"><div class="r-whoop-val">${d.strain.cal}</div><div class="r-whoop-label">CAL</div></div>`;
-    }
-    if (d.sleep) {
-      html += `<div class="r-whoop-item"><div class="r-whoop-val">${d.sleep.hours}h</div><div class="r-whoop-label">SLEEP</div></div>`;
-      html += `<div class="r-whoop-item"><div class="r-whoop-val">${d.sleep.quality}%</div><div class="r-whoop-label">QUALITY</div></div>`;
-    }
-
-    html += '</div></div>';
-    return html;
   },
 
   // ===== ACTIONS =====
@@ -653,18 +508,12 @@ const Reunions = {
     App.toast(this.isCompleted(d) ? 'Workout logged!' : 'Unmarked');
   },
 
-  toggleTier(key) {
-    this.collapsedTiers[key] = !this.collapsedTiers[key];
-    this.render();
-  },
-
   toggleDay(i) {
     this.expandedDay = this.expandedDay === i ? null : i;
     this.render();
   },
 
   submitCheckin(week) {
-    const whoopData = Whoop._cache;
     const entry = {
       week,
       date: new Date().toISOString(),
@@ -674,13 +523,6 @@ const Reunions = {
       energy: parseInt(document.getElementById('ci-energy').value) || null,
       healing: parseInt(document.getElementById('ci-healing').value) || null,
       notes: document.getElementById('ci-notes').value.trim() || null,
-      whoop: (whoopData && whoopData.ok) ? {
-        recovery: whoopData.recovery?.score || null,
-        hrv: whoopData.recovery?.hrv || null,
-        restingHR: whoopData.recovery?.restingHR || null,
-        strain: whoopData.strain?.score || null,
-        sleep: whoopData.sleep?.hours || null,
-      } : null,
     };
     this.data.checkins.push(entry);
     this._save();

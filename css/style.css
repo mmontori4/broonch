@@ -899,15 +899,10 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
   margin: 0 0 4px 4px;
   border-left: 3px solid transparent;
 }
-.r-exercise.tier-go { border-left-color: var(--green)60; }
-.r-exercise.tier-caution { border-left-color: var(--orange)60; }
-.r-exercise.tier-unlock { border-left-color: var(--blue)60; }
+.r-exercise { border-left-color: var(--orange)40; }
 .r-ex-top { display: flex; justify-content: space-between; align-items: center; }
 .r-ex-name { font-size: 0.9rem; font-weight: 600; color: var(--text); }
-.r-ex-sets { font-size: 0.85rem; font-weight: 700; }
-.tier-go .r-ex-sets { color: var(--green); }
-.tier-caution .r-ex-sets { color: var(--orange); }
-.tier-unlock .r-ex-sets { color: var(--blue); }
+.r-ex-sets { font-size: 0.85rem; font-weight: 700; color: var(--orange); }
 .r-ex-note { font-size: 0.7rem; color: var(--text2); margin-top: 3px; }
 
 /* Set input rows */
@@ -986,13 +981,17 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 .r-stat-label { font-size: 0.55rem; color: var(--text2); letter-spacing: 1px; margin-top: 2px; }
 
 /* Plan view */
-.r-plan-legend {
+.r-plan-phases { margin-bottom: 14px; }
+.r-phase-row {
   display: flex;
-  gap: 12px;
+  gap: 10px;
+  align-items: baseline;
+  padding: 4px 0;
   font-size: 0.7rem;
-  margin-bottom: 14px;
-  flex-wrap: wrap;
+  color: var(--text2);
 }
+.r-phase-row.current .phase-badge { background: var(--orange)20; color: var(--orange); }
+.r-phase-desc { line-height: 1.5; }
 .r-plan-day {
   width: 100%;
   display: flex;
@@ -1014,15 +1013,12 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 .r-plan-ex {
   padding: 8px 12px;
   margin-bottom: 3px;
-  border-left: 2px solid transparent;
+  border-left: 2px solid var(--orange)30;
   display: flex;
   justify-content: space-between;
 }
-.r-plan-ex.tier-go { border-left-color: var(--green)50; }
-.r-plan-ex.tier-caution { border-left-color: var(--orange)50; }
-.r-plan-ex.tier-unlock { border-left-color: var(--blue)50; }
 .r-plan-ex-name { font-size: 0.8rem; }
-.r-plan-ex-sets { font-size: 0.8rem; }
+.r-plan-ex-sets { font-size: 0.8rem; color: var(--orange); }
 
 /* Nutrition */
 .r-nutrition, .r-iteration-rules {
