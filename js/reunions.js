@@ -28,7 +28,7 @@ const Reunions = {
       ],
     },
     {
-      name: 'PULL A', subtitle: 'Back Width & Biceps', muscles: 'Lats · Rear Delts · Biceps', type: 'lifting',
+      name: 'PULL A', subtitle: 'Back Width & Biceps', muscles: 'Lats · Rear Delts · Biceps · Hamstrings', type: 'lifting',
       exercises: [
         { name: 'Pull-ups (weighted if able)', sets: '4×6-10', note: 'Add weight when bodyweight is easy' },
         { name: 'Seated Cable Row', sets: '4×10-12', note: 'Squeeze shoulder blades' },
@@ -36,6 +36,8 @@ const Reunions = {
         { name: 'Face Pulls', sets: '3×15-20', note: 'External rotate at top. Posture gains.' },
         { name: 'Incline DB Curl', sets: '3×10-12', note: 'Full stretch at bottom' },
         { name: 'Hammer Curls', sets: '3×12-15', note: 'Brachialis = arm width' },
+        { name: 'Leg Curl (lying)', sets: '3×12-15', note: 'Hamstrings, zero core demand' },
+        { name: 'Standing Calf Raise', sets: '3×15-20', note: 'Full stretch at bottom' },
       ],
     },
     {
@@ -51,7 +53,7 @@ const Reunions = {
       ],
     },
     {
-      name: 'PUSH B', subtitle: 'Shoulder Focus', muscles: 'Delts · Chest · Triceps', type: 'lifting',
+      name: 'PUSH B', subtitle: 'Shoulder Focus', muscles: 'Delts · Chest · Triceps · Quads', type: 'lifting',
       exercises: [
         { name: 'Seated DB Shoulder Press', sets: '4×8-10', note: 'Supported back, go heavy' },
         { name: 'Cable Lateral Raise', sets: '5×12-15', note: '5 sets. This is the move.' },
@@ -59,6 +61,7 @@ const Reunions = {
         { name: 'Front Raise (cable)', sets: '3×12-15', note: 'Anterior delt cap' },
         { name: 'Dips (chest emphasis)', sets: '3×8-12', note: 'Forward lean' },
         { name: 'Rope Pushdowns', sets: '3×12-15', note: 'Squeeze tris' },
+        { name: 'Leg Extension', sets: '3×12-15', note: 'Quad isolation, no pelvic load' },
       ],
     },
     {
