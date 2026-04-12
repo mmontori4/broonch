@@ -125,6 +125,77 @@ const Reunions = {
     localStorage.setItem('reunions_data', JSON.stringify(this.data));
   },
 
+  // ===== IN-PROGRESS DRAFTS =====
+  // Preserve mid-workout inputs across re-renders (tab switches, nav, expands).
+  _saveTodayDraft() {
+    const dayNum = this.getDayNum();
+    const exercises = [];
+    document.querySelectorAll('.r-exercise[data-ex-name]').forEach(el => {
+      const name = el.dataset.exName;
+      const sets = [];
+      let hasVal = false;
+      el.querySelectorAll('.r-set-row').forEach(row => {
+        const weight = row.querySelector('.r-set-wt').value;
+        const reps = row.querySelector('.r-set-rp').value;
+        if (weight || reps) hasVal = true;
+        sets.push({ weight, reps });
+      });
+      if (hasVal) exercises.push({ name, sets });
+    });
+    if (exercises.length === 0) {
+      localStorage.removeItem('reunions_draft_today');
+      return;
+    }
+    localStorage.setItem('reunions_draft_today', JSON.stringify({ dayNum, exercises }));
+  },
+
+  _loadTodayDraft() {
+    try {
+      const raw = localStorage.getItem('reunions_draft_today');
+      if (!raw) return null;
+      const d = JSON.parse(raw);
+      if (d.dayNum !== this.getDayNum()) return null;
+      return d.exercises;
+    } catch { return null; }
+  },
+
+  _clearTodayDraft() {
+    localStorage.removeItem('reunions_draft_today');
+  },
+
+  _saveCheckinDraft() {
+    const week = this.getWeek(this.getDayNum());
+    const entry = {
+      week,
+      weight: document.getElementById('ci-weight')?.value || '',
+      waist: document.getElementById('ci-waist')?.value || '',
+      shoulders: document.getElementById('ci-shoulders')?.value || '',
+      energy: document.getElementById('ci-energy')?.value || '',
+      healing: document.getElementById('ci-healing')?.value || '',
+      notes: document.getElementById('ci-notes')?.value || '',
+    };
+    const hasData = entry.weight || entry.waist || entry.shoulders || entry.energy || entry.healing || entry.notes;
+    if (!hasData) {
+      localStorage.removeItem('reunions_draft_checkin');
+      return;
+    }
+    localStorage.setItem('reunions_draft_checkin', JSON.stringify(entry));
+  },
+
+  _loadCheckinDraft() {
+    try {
+      const raw = localStorage.getItem('reunions_draft_checkin');
+      if (!raw) return null;
+      const d = JSON.parse(raw);
+      if (d.week !== this.getWeek(this.getDayNum())) return null;
+      return d;
+    } catch { return null; }
+  },
+
+  _clearCheckinDraft() {
+    localStorage.removeItem('reunions_draft_checkin');
+  },
+
   // ===== COMPUTED =====
   getDayNum() {
     return Math.max(0, Math.floor((new Date() - this.START) / 86400000));
@@ -224,10 +295,18 @@ const Reunions = {
       lastLog.exercises.forEach(e => { prefillMap[e.name] = e.sets; });
     }
 
+    // In-progress draft for this day overrides historical prefill per-exercise
+    const draftExercises = this._loadTodayDraft();
+    const draftMap = {};
+    if (draftExercises) {
+      draftExercises.forEach(e => { draftMap[e.name] = e.sets; });
+    }
+
     // Exercises
     workout.exercises.forEach(ex => {
       const numSets = this._parseSets(ex.sets);
-      const prefillSets = prefillMap[ex.name];
+      const draftSets = draftMap[ex.name];
+      const prefillSets = draftSets || prefillMap[ex.name];
 
       html += `
         <div class="r-exercise" data-ex-name="${ex.name}">
@@ -248,11 +327,11 @@ const Reunions = {
             <div class="r-set-row">
               <span class="r-set-num">${s + 1}</span>
               <div class="r-set-field">
-                <input type="number" inputmode="decimal" class="r-set-wt" placeholder="—" value="${wv}" step="2.5">
+                <input type="number" inputmode="decimal" class="r-set-wt" placeholder="—" value="${wv}" step="2.5" oninput="Reunions._saveTodayDraft()">
                 <span class="r-set-unit">lbs</span>
               </div>
               <div class="r-set-field">
-                <input type="number" inputmode="numeric" class="r-set-rp" placeholder="—" value="${rv}">
+                <input type="number" inputmode="numeric" class="r-set-rp" placeholder="—" value="${rv}" oninput="Reunions._saveTodayDraft()">
                 <span class="r-set-unit">reps</span>
               </div>
             </div>
@@ -365,6 +444,8 @@ const Reunions = {
 
   // ===== CHECK-IN =====
   _renderCheckin(el, week) {
+    const draft = this._loadCheckinDraft() || {};
+    const d = (k) => draft[k] || '';
     let html = `
       <div class="r-checkin-intro">
         <div class="r-section-title">WEEKLY CHECK-IN</div>
@@ -372,22 +453,22 @@ const Reunions = {
       </div>
       <div class="r-checkin-form">
         <label class="r-field-label">WEIGHT (LBS)</label>
-        <input type="number" inputmode="decimal" id="ci-weight" placeholder="0">
+        <input type="number" inputmode="decimal" id="ci-weight" placeholder="0" value="${d('weight')}" oninput="Reunions._saveCheckinDraft()">
 
         <label class="r-field-label">WAIST (INCHES)</label>
-        <input type="number" inputmode="decimal" id="ci-waist" placeholder="0" step="0.25">
+        <input type="number" inputmode="decimal" id="ci-waist" placeholder="0" step="0.25" value="${d('waist')}" oninput="Reunions._saveCheckinDraft()">
 
         <label class="r-field-label">SHOULDERS (INCHES)</label>
-        <input type="number" inputmode="decimal" id="ci-shoulders" placeholder="0" step="0.25">
+        <input type="number" inputmode="decimal" id="ci-shoulders" placeholder="0" step="0.25" value="${d('shoulders')}" oninput="Reunions._saveCheckinDraft()">
 
         <label class="r-field-label">ENERGY (1-10)</label>
-        <input type="number" inputmode="numeric" id="ci-energy" placeholder="0" min="1" max="10">
+        <input type="number" inputmode="numeric" id="ci-energy" placeholder="0" min="1" max="10" value="${d('energy')}" oninput="Reunions._saveCheckinDraft()">
 
         <label class="r-field-label">HEALING COMFORT (1-10)</label>
-        <input type="number" inputmode="numeric" id="ci-healing" placeholder="0" min="1" max="10">
+        <input type="number" inputmode="numeric" id="ci-healing" placeholder="0" min="1" max="10" value="${d('healing')}" oninput="Reunions._saveCheckinDraft()">
 
         <label class="r-field-label">NOTES / WHAT TO ADJUST</label>
-        <textarea id="ci-notes" placeholder="..."></textarea>
+        <textarea id="ci-notes" placeholder="..." oninput="Reunions._saveCheckinDraft()">${d('notes')}</textarea>
 
         <button class="r-submit-btn" onclick="Reunions.submitCheckin(${week})">LOG CHECK-IN</button>
       </div>
@@ -505,6 +586,7 @@ const Reunions = {
         week: this.getWeek(d),
         exercises,
       });
+      this._clearTodayDraft();
     }
     this._save();
     this.render();
@@ -529,6 +611,7 @@ const Reunions = {
     };
     this.data.checkins.push(entry);
     this._save();
+    this._clearCheckinDraft();
     App.toast('Check-in logged!');
     this.view = 'log';
     this.render();
