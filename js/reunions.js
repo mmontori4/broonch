@@ -107,10 +107,17 @@ const Reunions = {
 
   _getLastLog(splitIdx) {
     if (!this.data.workoutLog) return null;
+    const today = this.getDayNum();
     const logs = this.data.workoutLog
-      .filter(w => w.dayNum % 7 === splitIdx && w.exercises && w.exercises.length)
+      .filter(w => w.dayNum !== today && w.dayNum % 7 === splitIdx && w.complete !== false && w.exercises && w.exercises.length)
       .sort((a, b) => b.dayNum - a.dayNum);
     return logs[0] || null;
+  },
+
+  _getTodayEntry() {
+    if (!this.data.workoutLog) return null;
+    const today = this.getDayNum();
+    return this.data.workoutLog.find(w => w.dayNum === today) || null;
   },
 
   // ===== STORAGE =====
@@ -118,68 +125,87 @@ const Reunions = {
     try {
       this.data = JSON.parse(localStorage.getItem('reunions_data')) || { completedDays: [], checkins: [], workoutLog: [] };
       if (!this.data.workoutLog) this.data.workoutLog = [];
-    } catch { this.data = { completedDays: [], checkins: [], workoutLog: [] }; }
+      if (!this.data.completedDays) this.data.completedDays = [];
+      if (!this.data.checkins) this.data.checkins = [];
+    } catch (e) {
+      console.error('reunions _load failed', e);
+      this.data = { completedDays: [], checkins: [], workoutLog: [] };
+    }
   },
 
   _save() {
-    localStorage.setItem('reunions_data', JSON.stringify(this.data));
+    try {
+      localStorage.setItem('reunions_data', JSON.stringify(this.data));
+    } catch (e) {
+      console.error('reunions _save failed', e);
+    }
   },
 
-  // ===== IN-PROGRESS DRAFTS =====
-  // Preserve mid-workout inputs across re-renders (tab switches, nav, expands).
-  _saveTodayDraft() {
-    const dayNum = this.getDayNum();
+  // ===== LIVE WORKOUT STATE =====
+  // workoutLog is the single source of truth. Every keystroke upserts today's
+  // entry (complete:false until Mark Complete). No separate draft layer.
+  _collectTodayInputs() {
     const exercises = [];
     document.querySelectorAll('.r-exercise[data-ex-name]').forEach(el => {
       const name = el.dataset.exName;
       const sets = [];
-      let hasVal = false;
       el.querySelectorAll('.r-set-row').forEach(row => {
-        const weight = row.querySelector('.r-set-wt').value;
-        const reps = row.querySelector('.r-set-rp').value;
-        if (weight || reps) hasVal = true;
-        sets.push({ weight, reps });
+        const wEl = row.querySelector('.r-set-wt');
+        const rEl = row.querySelector('.r-set-rp');
+        sets.push({
+          weight: wEl ? wEl.value : '',
+          reps: rEl ? rEl.value : '',
+        });
       });
-      if (hasVal) exercises.push({ name, sets });
+      if (sets.length > 0) exercises.push({ name, sets });
     });
-    if (exercises.length === 0) {
-      localStorage.removeItem('reunions_draft_today');
-      return;
+    return exercises;
+  },
+
+  _saveTodayInput() {
+    const d = this.getDayNum();
+    const workout = this.SPLIT[d % 7];
+    const exercises = this._collectTodayInputs();
+    if (!exercises.length) return;
+    let entry = this._getTodayEntry();
+    if (!entry) {
+      entry = {
+        dayNum: d,
+        date: new Date().toISOString(),
+        name: workout.name,
+        subtitle: workout.subtitle,
+        muscles: workout.muscles,
+        week: this.getWeek(d),
+        exercises: [],
+        complete: false,
+      };
+      this.data.workoutLog.push(entry);
     }
-    localStorage.setItem('reunions_draft_today', JSON.stringify({ dayNum, exercises }));
-  },
-
-  _loadTodayDraft() {
-    try {
-      const raw = localStorage.getItem('reunions_draft_today');
-      if (!raw) return null;
-      const d = JSON.parse(raw);
-      if (d.dayNum !== this.getDayNum()) return null;
-      return d.exercises;
-    } catch { return null; }
-  },
-
-  _clearTodayDraft() {
-    localStorage.removeItem('reunions_draft_today');
+    entry.exercises = exercises;
+    this._save();
   },
 
   _saveCheckinDraft() {
-    const week = this.getWeek(this.getDayNum());
-    const entry = {
-      week,
-      weight: document.getElementById('ci-weight')?.value || '',
-      waist: document.getElementById('ci-waist')?.value || '',
-      shoulders: document.getElementById('ci-shoulders')?.value || '',
-      energy: document.getElementById('ci-energy')?.value || '',
-      healing: document.getElementById('ci-healing')?.value || '',
-      notes: document.getElementById('ci-notes')?.value || '',
-    };
-    const hasData = entry.weight || entry.waist || entry.shoulders || entry.energy || entry.healing || entry.notes;
-    if (!hasData) {
-      localStorage.removeItem('reunions_draft_checkin');
-      return;
+    try {
+      const week = this.getWeek(this.getDayNum());
+      const entry = {
+        week,
+        weight: document.getElementById('ci-weight')?.value || '',
+        waist: document.getElementById('ci-waist')?.value || '',
+        shoulders: document.getElementById('ci-shoulders')?.value || '',
+        energy: document.getElementById('ci-energy')?.value || '',
+        healing: document.getElementById('ci-healing')?.value || '',
+        notes: document.getElementById('ci-notes')?.value || '',
+      };
+      const hasData = entry.weight || entry.waist || entry.shoulders || entry.energy || entry.healing || entry.notes;
+      if (!hasData) {
+        localStorage.removeItem('reunions_draft_checkin');
+        return;
+      }
+      localStorage.setItem('reunions_draft_checkin', JSON.stringify(entry));
+    } catch (e) {
+      console.error('reunions _saveCheckinDraft failed', e);
     }
-    localStorage.setItem('reunions_draft_checkin', JSON.stringify(entry));
   },
 
   _loadCheckinDraft() {
@@ -193,7 +219,13 @@ const Reunions = {
   },
 
   _clearCheckinDraft() {
-    localStorage.removeItem('reunions_draft_checkin');
+    try { localStorage.removeItem('reunions_draft_checkin'); } catch {}
+  },
+
+  // Flush any in-memory input state before page hide/unload.
+  _flushLiveState() {
+    if (this.view === 'today') this._saveTodayInput();
+    else if (this.view === 'checkin') this._saveCheckinDraft();
   },
 
   // ===== COMPUTED =====
@@ -224,6 +256,15 @@ const Reunions = {
   // ===== INIT =====
   init() {
     this._load();
+    if (!this._listenersInstalled) {
+      const flush = () => this._flushLiveState();
+      window.addEventListener('beforeunload', flush);
+      window.addEventListener('pagehide', flush);
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') flush();
+      });
+      this._listenersInstalled = true;
+    }
     this.render();
   },
 
@@ -288,25 +329,23 @@ const Reunions = {
       `;
     }
 
-    // Prefill from last session of this same split day
+    // Today's in-progress entry is the source of truth for current inputs.
+    // Fallback: prefill from last completed session of the same split day.
     const lastLog = this._getLastLog(dayNum % 7);
     const prefillMap = {};
     if (lastLog && lastLog.exercises) {
       lastLog.exercises.forEach(e => { prefillMap[e.name] = e.sets; });
     }
-
-    // In-progress draft for this day overrides historical prefill per-exercise
-    const draftExercises = this._loadTodayDraft();
-    const draftMap = {};
-    if (draftExercises) {
-      draftExercises.forEach(e => { draftMap[e.name] = e.sets; });
+    const todayEntry = this._getTodayEntry();
+    const liveMap = {};
+    if (todayEntry && todayEntry.exercises) {
+      todayEntry.exercises.forEach(e => { liveMap[e.name] = e.sets; });
     }
 
-    // Exercises
+    // Exercises — live entry wins over historical prefill when present
     workout.exercises.forEach(ex => {
       const numSets = this._parseSets(ex.sets);
-      const draftSets = draftMap[ex.name];
-      const prefillSets = draftSets || prefillMap[ex.name];
+      const prefillSets = liveMap[ex.name] || prefillMap[ex.name];
 
       html += `
         <div class="r-exercise" data-ex-name="${ex.name}">
@@ -327,11 +366,11 @@ const Reunions = {
             <div class="r-set-row">
               <span class="r-set-num">${s + 1}</span>
               <div class="r-set-field">
-                <input type="number" inputmode="decimal" class="r-set-wt" placeholder="—" value="${wv}" step="2.5" oninput="Reunions._saveTodayDraft()">
+                <input type="number" inputmode="decimal" class="r-set-wt" placeholder="—" value="${wv}" step="2.5" oninput="Reunions._saveTodayInput()" onchange="Reunions._saveTodayInput()" onblur="Reunions._saveTodayInput()">
                 <span class="r-set-unit">lbs</span>
               </div>
               <div class="r-set-field">
-                <input type="number" inputmode="numeric" class="r-set-rp" placeholder="—" value="${rv}" oninput="Reunions._saveTodayDraft()">
+                <input type="number" inputmode="numeric" class="r-set-rp" placeholder="—" value="${rv}" oninput="Reunions._saveTodayInput()" onchange="Reunions._saveTodayInput()" onblur="Reunions._saveTodayInput()">
                 <span class="r-set-unit">reps</span>
               </div>
             </div>
@@ -453,22 +492,22 @@ const Reunions = {
       </div>
       <div class="r-checkin-form">
         <label class="r-field-label">WEIGHT (LBS)</label>
-        <input type="number" inputmode="decimal" id="ci-weight" placeholder="0" value="${d('weight')}" oninput="Reunions._saveCheckinDraft()">
+        <input type="number" inputmode="decimal" id="ci-weight" placeholder="0" value="${d('weight')}" oninput="Reunions._saveCheckinDraft()" onblur="Reunions._saveCheckinDraft()">
 
         <label class="r-field-label">WAIST (INCHES)</label>
-        <input type="number" inputmode="decimal" id="ci-waist" placeholder="0" step="0.25" value="${d('waist')}" oninput="Reunions._saveCheckinDraft()">
+        <input type="number" inputmode="decimal" id="ci-waist" placeholder="0" step="0.25" value="${d('waist')}" oninput="Reunions._saveCheckinDraft()" onblur="Reunions._saveCheckinDraft()">
 
         <label class="r-field-label">SHOULDERS (INCHES)</label>
-        <input type="number" inputmode="decimal" id="ci-shoulders" placeholder="0" step="0.25" value="${d('shoulders')}" oninput="Reunions._saveCheckinDraft()">
+        <input type="number" inputmode="decimal" id="ci-shoulders" placeholder="0" step="0.25" value="${d('shoulders')}" oninput="Reunions._saveCheckinDraft()" onblur="Reunions._saveCheckinDraft()">
 
         <label class="r-field-label">ENERGY (1-10)</label>
-        <input type="number" inputmode="numeric" id="ci-energy" placeholder="0" min="1" max="10" value="${d('energy')}" oninput="Reunions._saveCheckinDraft()">
+        <input type="number" inputmode="numeric" id="ci-energy" placeholder="0" min="1" max="10" value="${d('energy')}" oninput="Reunions._saveCheckinDraft()" onblur="Reunions._saveCheckinDraft()">
 
         <label class="r-field-label">HEALING COMFORT (1-10)</label>
-        <input type="number" inputmode="numeric" id="ci-healing" placeholder="0" min="1" max="10" value="${d('healing')}" oninput="Reunions._saveCheckinDraft()">
+        <input type="number" inputmode="numeric" id="ci-healing" placeholder="0" min="1" max="10" value="${d('healing')}" oninput="Reunions._saveCheckinDraft()" onblur="Reunions._saveCheckinDraft()">
 
         <label class="r-field-label">NOTES / WHAT TO ADJUST</label>
-        <textarea id="ci-notes" placeholder="..." oninput="Reunions._saveCheckinDraft()">${d('notes')}</textarea>
+        <textarea id="ci-notes" placeholder="..." oninput="Reunions._saveCheckinDraft()" onblur="Reunions._saveCheckinDraft()">${d('notes')}</textarea>
 
         <button class="r-submit-btn" onclick="Reunions.submitCheckin(${week})">LOG CHECK-IN</button>
       </div>
@@ -488,7 +527,8 @@ const Reunions = {
 
   // ===== LOG =====
   _renderLog(el) {
-    const hasWorkouts = this.data.workoutLog.length > 0;
+    const completedWorkouts = this.data.workoutLog.filter(w => w.complete !== false);
+    const hasWorkouts = completedWorkouts.length > 0;
     const hasCheckins = this.data.checkins.length > 0;
 
     if (!hasWorkouts && !hasCheckins) {
@@ -501,7 +541,7 @@ const Reunions = {
     // Workout history
     if (hasWorkouts) {
       html += '<div class="r-section-title">WORKOUT HISTORY</div>';
-      [...this.data.workoutLog].reverse().forEach(w => {
+      [...completedWorkouts].reverse().forEach(w => {
         const d = new Date(w.date);
         const dayStr = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
         html += `
@@ -551,42 +591,32 @@ const Reunions = {
   toggleComplete() {
     const d = this.getDayNum();
     const workout = this.SPLIT[d % 7];
-    if (this.isCompleted(d)) {
+    // Capture any pending input first so Mark Complete never drops a keystroke.
+    this._saveTodayInput();
+
+    let entry = this._getTodayEntry();
+    if (entry && entry.complete) {
+      // Un-complete: keep the numbers, just flip the flag.
+      entry.complete = false;
       this.data.completedDays = this.data.completedDays.filter(x => x !== d);
-      this.data.workoutLog = this.data.workoutLog.filter(x => x.dayNum !== d);
     } else {
-      this.data.completedDays.push(d);
-
-      // Collect exercise data from inputs
-      const exercises = [];
-      document.querySelectorAll('.r-exercise[data-ex-name]').forEach(el => {
-        const name = el.dataset.exName;
-        const sets = [];
-        el.querySelectorAll('.r-set-row').forEach(row => {
-          const weight = row.querySelector('.r-set-wt').value;
-          const reps = row.querySelector('.r-set-rp').value;
-          if (weight || reps) {
-            sets.push({
-              weight: parseFloat(weight) || 0,
-              reps: parseInt(reps) || 0
-            });
-          }
-        });
-        if (sets.length > 0) {
-          exercises.push({ name, sets });
-        }
-      });
-
-      this.data.workoutLog.push({
-        dayNum: d,
-        date: new Date().toISOString(),
-        name: workout.name,
-        subtitle: workout.subtitle,
-        muscles: workout.muscles,
-        week: this.getWeek(d),
-        exercises,
-      });
-      this._clearTodayDraft();
+      if (!entry) {
+        entry = {
+          dayNum: d,
+          date: new Date().toISOString(),
+          name: workout.name,
+          subtitle: workout.subtitle,
+          muscles: workout.muscles,
+          week: this.getWeek(d),
+          exercises: [],
+          complete: false,
+        };
+        this.data.workoutLog.push(entry);
+      }
+      entry.exercises = this._collectTodayInputs();
+      entry.complete = true;
+      entry.date = new Date().toISOString();
+      if (!this.data.completedDays.includes(d)) this.data.completedDays.push(d);
     }
     this._save();
     this.render();
