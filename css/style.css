@@ -901,9 +901,12 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 }
 .r-exercise { border-left-color: var(--orange)40; }
 .r-ex-top { display: flex; justify-content: space-between; align-items: center; }
-.r-ex-name { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+.r-ex-name { font-size: 0.9rem; font-weight: 600; color: var(--text); border-bottom: 1px dashed transparent; }
+.r-ex-name:focus { outline: none; border-bottom-color: var(--accent); background: var(--surface2); }
 .r-ex-sets { font-size: 0.85rem; font-weight: 700; color: var(--orange); }
-.r-ex-note { font-size: 0.7rem; color: var(--text2); margin-top: 3px; }
+.r-ex-note { font-size: 0.7rem; color: var(--text2); margin-top: 3px; display: flex; justify-content: space-between; align-items: flex-end; }
+.r-baseline { color: var(--green); font-weight: 600; cursor: pointer; opacity: 0.8; }
+.r-baseline:active { opacity: 1; }
 
 /* Set input rows */
 .r-sets { margin-top: 8px; }

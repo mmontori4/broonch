@@ -91,6 +91,12 @@ const Reunions = {
     return m ? parseInt(m[1]) : null;
   },
 
+  _parseReps(str) {
+    const m = str.match(/[×x]\s*(\d+)-?(\d+)?/i);
+    if (!m) return null;
+    return { min: parseInt(m[1]), max: m[2] ? parseInt(m[2]) : parseInt(m[1]) };
+  },
+
   _getLastLog(splitIdx) {
     if (!this.data.workoutLog) return null;
     const today = this.getDayNum();
@@ -109,13 +115,14 @@ const Reunions = {
   // ===== STORAGE =====
   _load() {
     try {
-      this.data = JSON.parse(localStorage.getItem('reunions_data')) || { completedDays: [], checkins: [], workoutLog: [] };
+      this.data = JSON.parse(localStorage.getItem('reunions_data')) || { completedDays: [], checkins: [], workoutLog: [], baselines: {} };
       if (!this.data.workoutLog) this.data.workoutLog = [];
       if (!this.data.completedDays) this.data.completedDays = [];
       if (!this.data.checkins) this.data.checkins = [];
+      if (!this.data.baselines) this.data.baselines = {};
     } catch (e) {
       console.error('reunions _load failed', e);
-      this.data = { completedDays: [], checkins: [], workoutLog: [] };
+      this.data = { completedDays: [], checkins: [], workoutLog: [], baselines: {} };
     }
   },
 
@@ -132,8 +139,9 @@ const Reunions = {
   // entry (complete:false until Mark Complete). No separate draft layer.
   _collectTodayInputs() {
     const exercises = [];
-    document.querySelectorAll('.r-exercise[data-ex-name]').forEach(el => {
-      const name = el.dataset.exName;
+    document.querySelectorAll('.r-exercise').forEach(el => {
+      const nameEl = el.querySelector('.r-ex-name');
+      const name = nameEl ? nameEl.textContent.trim() : '';
       const sets = [];
       el.querySelectorAll('.r-set-row').forEach(row => {
         const wEl = row.querySelector('.r-set-wt');
@@ -329,17 +337,26 @@ const Reunions = {
     }
 
     // Exercises — live entry wins over historical prefill when present
-    workout.exercises.forEach(ex => {
-      const numSets = this._parseSets(ex.sets);
+    const exerciseList = (todayEntry && todayEntry.exercises && todayEntry.exercises.length) 
+      ? todayEntry.exercises.map((e, idx) => ({ ...e, setsConfig: workout.exercises[idx]?.sets || '3x10', note: workout.exercises[idx]?.note || '' }))
+      : workout.exercises.map(e => ({ ...e, setsConfig: e.sets }));
+
+    exerciseList.forEach(ex => {
+      const numSets = this._parseSets(ex.setsConfig);
       const prefillSets = liveMap[ex.name] || prefillMap[ex.name];
+      const baseline = this.data.baselines[ex.name];
+      const baselineStr = baseline ? `${baseline.weight}x${baseline.reps}` : '—';
 
       html += `
-        <div class="r-exercise" data-ex-name="${ex.name}">
+        <div class="r-exercise">
           <div class="r-ex-top">
-            <span class="r-ex-name">${ex.name}</span>
-            <span class="r-ex-sets">${ex.sets}</span>
+            <span class="r-ex-name" contenteditable="true" onblur="Reunions._saveTodayInput()">${ex.name}</span>
+            <span class="r-ex-sets">${ex.setsConfig}</span>
           </div>
-          <div class="r-ex-note">${ex.note}</div>
+          <div class="r-ex-note">
+            <span>${ex.note}</span>
+            <span class="r-baseline" onclick="Reunions.editBaseline('${ex.name.replace(/'/g, "\\'")}')">Best: ${baselineStr}</span>
+          </div>
       `;
 
       if (numSets) {
@@ -602,10 +619,60 @@ const Reunions = {
       entry.complete = true;
       entry.date = new Date().toISOString();
       if (!this.data.completedDays.includes(d)) this.data.completedDays.push(d);
+
+      // Auto-calculate baselines
+      entry.exercises.forEach((ex, idx) => {
+        const config = workout.exercises[idx];
+        if (!config) return;
+        const repsRange = this._parseReps(config.sets);
+        if (!repsRange) return;
+
+        let bestWeight = 0;
+        let bestReps = 0;
+
+        ex.sets.forEach(s => {
+          const w = parseFloat(s.weight);
+          const r = parseInt(s.reps);
+          if (isNaN(w) || isNaN(r)) return;
+
+          // "Full rep count" = hit the minimum prescribed reps
+          if (r >= repsRange.min) {
+            if (w > bestWeight || (w === bestWeight && r > bestReps)) {
+              bestWeight = w;
+              bestReps = r;
+            }
+          }
+        });
+
+        if (bestWeight > 0) {
+          const current = this.data.baselines[ex.name];
+          if (!current || bestWeight > current.weight || (bestWeight === current.weight && bestReps > current.reps)) {
+            this.data.baselines[ex.name] = { weight: bestWeight, reps: bestReps };
+          }
+        }
+      });
     }
     this._save();
     this.render();
     App.toast(this.isCompleted(d) ? 'Workout logged!' : 'Unmarked');
+  },
+
+  editBaseline(name) {
+    const current = this.data.baselines[name] || { weight: 0, reps: 0 };
+    const input = prompt(`Edit baseline for ${name} (Format: weight x reps):`, `${current.weight}x${current.reps}`);
+    if (input) {
+      const m = input.match(/(\d+\.?\d*)\s*[×x]\s*(\d+)/i);
+      if (m) {
+        this.data.baselines[name] = {
+          weight: parseFloat(m[1]),
+          reps: parseInt(m[2])
+        };
+        this._save();
+        this.render();
+      } else {
+        alert("Invalid format. Use '100x10'");
+      }
+    }
   },
 
   toggleDay(i) {

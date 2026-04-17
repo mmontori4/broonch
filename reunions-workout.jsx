@@ -122,9 +122,20 @@ function getPhase(weekNum) {
   return PHASES.find(p => p.weeks.includes(weekNum)) || PHASES[0];
 }
 
+function parseSets(str) {
+  const m = str.match(/^(\d+)\s*[×x]/i);
+  return m ? parseInt(m[1]) : null;
+}
+
+function parseReps(str) {
+  const m = str.match(/[×x]\s*(\d+)-?(\d+)?/i);
+  if (!m) return null;
+  return { min: parseInt(m[1]), max: m[2] ? parseInt(m[2]) : parseInt(m[1]) };
+}
+
 export default function ReunionsWorkout() {
   const [view, setView] = useState("today");
-  const [data, setData] = useState({ completedDays: [], checkins: [] });
+  const [data, setData] = useState({ completedDays: [], checkins: [], workoutLog: [], baselines: {} });
   const [checkinForm, setCheckinForm] = useState({});
   const [expandedDay, setExpandedDay] = useState(null);
 
@@ -133,7 +144,13 @@ export default function ReunionsWorkout() {
       try {
         const result = await window.storage.get("reunions-v2");
         if (result && result.value) {
-          setData(JSON.parse(result.value));
+          const parsed = JSON.parse(result.value);
+          setData({
+            completedDays: parsed.completedDays || [],
+            checkins: parsed.checkins || [],
+            workoutLog: parsed.workoutLog || [],
+            baselines: parsed.baselines || {},
+          });
           return;
         }
       } catch {}
@@ -151,21 +168,96 @@ export default function ReunionsWorkout() {
   const weekNum = getWeekNumber(dayNum);
   const phase = getPhase(weekNum);
   const todaySplitIndex = dayNum % 7;
-  const todayWorkout = SPLIT[todaySplitIndex];
+  const workoutConfig = SPLIT[todaySplitIndex];
   const isCompleted = data.completedDays.includes(dayNum);
+  const todayEntry = data.workoutLog?.find(w => w.dayNum === dayNum);
 
-  const toggleComplete = () => {
-    const newCompleted = isCompleted
-      ? data.completedDays.filter(d => d !== dayNum)
-      : [...data.completedDays, dayNum];
-    persist({ ...data, completedDays: newCompleted });
+  const updateExerciseName = (idx, newName) => {
+    const newLog = [...(data.workoutLog || [])];
+    let entry = newLog.find(w => w.dayNum === dayNum);
+    if (!entry) {
+      entry = { dayNum, date: new Date().toISOString(), week: weekNum, exercises: workoutConfig.exercises.map(e => ({ name: e.name, sets: [] })), complete: false };
+      newLog.push(entry);
+    }
+    entry.exercises[idx].name = newName;
+    persist({ ...data, workoutLog: newLog });
   };
 
-  const submitCheckin = () => {
-    const entry = { week: weekNum, date: new Date().toISOString(), ...checkinForm };
-    persist({ ...data, checkins: [...data.checkins, entry] });
-    setCheckinForm({});
-    setView("today");
+  const updateSet = (exIdx, setIdx, field, value) => {
+    const newLog = [...(data.workoutLog || [])];
+    let entry = newLog.find(w => w.dayNum === dayNum);
+    if (!entry) {
+      entry = { dayNum, date: new Date().toISOString(), week: weekNum, exercises: workoutConfig.exercises.map(e => ({ name: e.name, sets: [] })), complete: false };
+      newLog.push(entry);
+    }
+    if (!entry.exercises[exIdx].sets[setIdx]) {
+      entry.exercises[exIdx].sets[setIdx] = { weight: "", reps: "" };
+    }
+    entry.exercises[exIdx].sets[setIdx][field] = value;
+    persist({ ...data, workoutLog: newLog });
+  };
+
+  const editBaseline = (name) => {
+    const current = data.baselines[name] || { weight: 0, reps: 0 };
+    const input = prompt(`Edit baseline for ${name} (Format: weight x reps):`, `${current.weight}x${current.reps}`);
+    if (input) {
+      const m = input.match(/(\d+\.?\d*)\s*[×x]\s*(\d+)/i);
+      if (m) {
+        const newBaselines = { ...data.baselines, [name]: { weight: parseFloat(m[1]), reps: parseInt(m[2]) } };
+        persist({ ...data, baselines: newBaselines });
+      } else {
+        alert("Invalid format. Use '100x10'");
+      }
+    }
+  };
+
+  const toggleComplete = () => {
+    let newLog = [...(data.workoutLog || [])];
+    let entry = newLog.find(w => w.dayNum === dayNum);
+    
+    if (isCompleted) {
+      if (entry) entry.complete = false;
+      persist({ ...data, completedDays: data.completedDays.filter(d => d !== dayNum), workoutLog: newLog });
+    } else {
+      if (!entry) {
+        entry = { dayNum, date: new Date().toISOString(), week: weekNum, exercises: workoutConfig.exercises.map(e => ({ name: e.name, sets: [] })), complete: true };
+        newLog.push(entry);
+      } else {
+        entry.complete = true;
+      }
+      
+      // Auto-calculate baselines
+      const newBaselines = { ...data.baselines };
+      entry.exercises.forEach((ex, idx) => {
+        const config = workoutConfig.exercises[idx];
+        if (!config) return;
+        const repsRange = parseReps(config.sets);
+        if (!repsRange) return;
+
+        let bestWeight = 0;
+        let bestReps = 0;
+        ex.sets.forEach(s => {
+          const w = parseFloat(s.weight);
+          const r = parseInt(s.reps);
+          if (isNaN(w) || isNaN(r)) return;
+          if (r >= repsRange.min) {
+            if (w > bestWeight || (w === bestWeight && r > bestReps)) {
+              bestWeight = w;
+              bestReps = r;
+            }
+          }
+        });
+
+        if (bestWeight > 0) {
+          const current = newBaselines[ex.name];
+          if (!current || bestWeight > current.weight || (bestWeight === current.weight && bestReps > current.reps)) {
+            newBaselines[ex.name] = { weight: bestWeight, reps: bestReps };
+          }
+        }
+      });
+
+      persist({ ...data, completedDays: [...data.completedDays, dayNum], workoutLog: newLog, baselines: newBaselines });
+    }
   };
 
   const completionRate = dayNum > 0
@@ -190,6 +282,10 @@ export default function ReunionsWorkout() {
       borderRadius: 3, background: color + "20", color: color, fontFamily: f,
     }}>{children}</span>
   );
+
+  const displayExercises = todayEntry && todayEntry.exercises && todayEntry.exercises.length
+    ? todayEntry.exercises.map((e, idx) => ({ ...e, setsConfig: workoutConfig.exercises[idx]?.sets || '3x10', note: workoutConfig.exercises[idx]?.note || '' }))
+    : workoutConfig.exercises.map(e => ({ ...e, setsConfig: e.sets }));
 
   return (
     <div style={{ fontFamily: f, background: c.bg, color: c.text, minHeight: "100vh", maxWidth: 480, margin: "0 auto", paddingBottom: 100, WebkitFontSmoothing: "antialiased" }}>
@@ -217,10 +313,10 @@ export default function ReunionsWorkout() {
       {/* TABS */}
       <div style={{ display: "flex", borderBottom: `1px solid ${c.border}` }}>
         {["today", "plan", "check-in", "log"].map(tab => (
-          <button key={tab} onClick={() => setView(tab)} style={{
+          <button key={tab} onClick={() => setView(tab === "check-in" ? "checkin" : tab)} style={{
             flex: 1, padding: "11px 0", background: "none", border: "none", fontFamily: f,
-            color: view === tab ? c.accent : c.dim, fontSize: 10, letterSpacing: 1.5, fontWeight: view === tab ? 700 : 400,
-            cursor: "pointer", borderBottom: view === tab ? `2px solid ${c.accent}` : "2px solid transparent", textTransform: "uppercase",
+            color: (view === tab || (view === "checkin" && tab === "check-in")) ? c.accent : c.dim, fontSize: 10, letterSpacing: 1.5, fontWeight: (view === tab || (view === "checkin" && tab === "check-in")) ? 700 : 400,
+            cursor: "pointer", borderBottom: (view === tab || (view === "checkin" && tab === "check-in")) ? `2px solid ${c.accent}` : "2px solid transparent", textTransform: "uppercase",
           }}>{tab}</button>
         ))}
       </div>
@@ -233,24 +329,64 @@ export default function ReunionsWorkout() {
               <span style={{ fontSize: 10, color: c.dim, letterSpacing: 2 }}>DAY {dayNum + 1}</span>
               <Pill color={isCompleted ? c.green : c.dim}>{isCompleted ? "DONE" : "PENDING"}</Pill>
             </div>
-            <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 2 }}>{todayWorkout.name}</div>
-            <div style={{ fontSize: 12, color: c.accent }}>{todayWorkout.subtitle}</div>
-            <div style={{ fontSize: 10, color: c.dim, marginTop: 4 }}>{todayWorkout.muscles}</div>
+            <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 2 }}>{workoutConfig.name}</div>
+            <div style={{ fontSize: 12, color: c.accent }}>{workoutConfig.subtitle}</div>
+            <div style={{ fontSize: 10, color: c.dim, marginTop: 4 }}>{workoutConfig.muscles}</div>
           </div>
 
-          {todayWorkout.exercises.map((ex, ei) => (
-            <div key={ei} style={{
-              background: c.card, border: `1px solid ${c.border}`, borderRadius: 5,
-              padding: "12px 14px", marginTop: 6,
-              borderLeft: `3px solid ${c.accent}30`,
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 13, fontWeight: 600 }}>{ex.name}</span>
-                <span style={{ fontSize: 12, color: c.accent, fontWeight: 700 }}>{ex.sets}</span>
+          {displayExercises.map((ex, ei) => {
+            const numSets = parseSets(ex.setsConfig);
+            const baseline = data.baselines[ex.name];
+            const baselineStr = baseline ? `${baseline.weight}x${baseline.reps}` : '—';
+            
+            return (
+              <div key={ei} style={{
+                background: c.card, border: `1px solid ${c.border}`, borderRadius: 5,
+                padding: "12px 14px", marginTop: 6,
+                borderLeft: `3px solid ${c.accent}30`,
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <input
+                    value={ex.name}
+                    onChange={(e) => updateExerciseName(ei, e.target.value)}
+                    style={{ fontSize: 13, fontWeight: 600, background: "none", border: "none", borderBottom: "1px dashed transparent", color: c.text, padding: 0, width: "70%" }}
+                  />
+                  <span style={{ fontSize: 12, color: c.accent, fontWeight: 700 }}>{ex.setsConfig}</span>
+                </div>
+                <div style={{ fontSize: 10, color: c.dim, marginTop: 3, display: "flex", justifyContent: "space-between" }}>
+                  <span>{ex.note}</span>
+                  <span onClick={() => editBaseline(ex.name)} style={{ color: c.green, fontWeight: 600, cursor: "pointer" }}>Best: {baselineStr}</span>
+                </div>
+
+                {numSets && (
+                  <div style={{ marginTop: 10 }}>
+                    {Array.from({ length: numSets }).map((_, si) => {
+                      const setVal = todayEntry?.exercises[ei]?.sets[si] || { weight: "", reps: "" };
+                      return (
+                        <div key={si} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                          <span style={{ width: 20, fontSize: 10, color: c.dim }}>{si + 1}</span>
+                          <input
+                            type="number" inputMode="decimal" placeholder="—"
+                            value={setVal.weight}
+                            onChange={(e) => updateSet(ei, si, "weight", e.target.value)}
+                            style={{ width: 60, height: 32, textAlign: "center", fontSize: 12, background: c.bg, border: `1px solid ${c.border}`, borderRadius: 4, color: c.text }}
+                          />
+                          <span style={{ fontSize: 9, color: c.dim }}>lbs</span>
+                          <input
+                            type="number" inputMode="numeric" placeholder="—"
+                            value={setVal.reps}
+                            onChange={(e) => updateSet(ei, si, "reps", e.target.value)}
+                            style={{ width: 50, height: 32, textAlign: "center", fontSize: 12, background: c.bg, border: `1px solid ${c.border}`, borderRadius: 4, color: c.text }}
+                          />
+                          <span style={{ fontSize: 9, color: c.dim }}>reps</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
-              <div style={{ fontSize: 10, color: c.dim, marginTop: 3 }}>{ex.note}</div>
-            </div>
-          ))}
+            );
+          })}
 
           <button onClick={toggleComplete} style={{
             width: "100%", padding: 14, marginTop: 14, border: "none", borderRadius: 8,
@@ -351,7 +487,7 @@ export default function ReunionsWorkout() {
       )}
 
       {/* ===== CHECK-IN ===== */}
-      {view === "check-in" && (
+      {view === "checkin" && (
         <div style={{ padding: 16 }}>
           <div style={{ fontSize: 10, color: c.dim, letterSpacing: 2, marginBottom: 2 }}>WEEKLY CHECK-IN</div>
           <div style={{ fontSize: 11, color: c.dim, marginBottom: 16, lineHeight: 1.5 }}>
