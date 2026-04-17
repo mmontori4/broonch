@@ -20,22 +20,20 @@ const Reunions = {
   SPLIT: [
     {
       name: 'PUSH + WIDTH', subtitle: 'Heavy Push + Side Delts', muscles: 'Chest · Shoulders · Triceps', type: 'lifting',
-      warmup: { label: '10 min Zone 2', note: 'Erg or brisk walk. Blood flow + joint prep.' },
-      cooldown: { label: '5 min Zone 2', note: 'Easy spin. Recovery flush.' },
+      warmup: { label: '15 min Zone 2', note: 'Erg or brisk walk. Blood flow + joint prep.' },
       exercises: [
         { name: 'BB Bench Press', sets: '3×5-8', note: 'Heavy compound' },
         { name: 'Seated DB OHP', sets: '3×8-10', note: 'Vertical push base' },
         { name: 'Incline DB Press', sets: '3×10-12', note: 'Upper chest shelf' },
-        { name: 'Cable Lateral Raise', sets: '4×15', note: 'Constant tension. Width focus.' },
-        { name: 'Tricep Cable Pushdown', sets: '3×12-15', note: 'Full extension' },
+        { name: 'Cable Lateral Raise', sets: '4×15', note: 'Constant tension. Width focus.', group: 'A' },
+        { name: 'Tricep Cable Pushdown', sets: '3×12-15', note: 'Full extension', group: 'A' },
       ],
     },
     {
       name: 'LAT WIDTH', subtitle: 'Ring Pulls + Lat Stretch', muscles: 'Lats · Biceps', type: 'lifting',
-      warmup: { label: '10 min Zone 2', note: 'Erg preferred. Primes lats and grip.' },
-      cooldown: { label: '5 min Zone 2', note: 'Easy spin.' },
+      warmup: { label: '15 min Zone 2', note: 'Erg preferred. Primes lats and grip.' },
       exercises: [
-        { name: 'Ring Pull-ups', sets: '4×Max', note: 'Dead hang, full stretch' },
+        { name: 'Ring Pull-ups', sets: '4×6-10', note: 'Dead hang, full stretch. Band assist if needed.' },
         { name: 'Ring Rows', sets: '3×12', note: 'Feet elevated' },
         { name: 'DB Lat Pullovers', sets: '3×12-15', note: 'Stretch-mediated hypertrophy' },
         { name: 'DB Curls', sets: '3×12-15', note: 'Standard or incline' },
@@ -44,14 +42,13 @@ const Reunions = {
     },
     {
       name: 'THICKNESS/LEGS', subtitle: 'BB Rows + Health Legs', muscles: 'Back · Quads · Hamstrings', type: 'lifting',
-      warmup: { label: '10 min Zone 2', note: 'Erg or bike. Warm hips and low back.' },
-      cooldown: { label: '5 min Zone 2', note: 'Easy spin. Flush the legs.' },
+      warmup: { label: '15 min Zone 2', note: 'Erg or bike. Warm hips and low back.' },
       exercises: [
         { name: 'Barbell Row (Strict)', sets: '4×6-8', note: 'Mid-back thickness' },
         { name: 'Chest-Supported Row', sets: '3×10-12', note: 'Isolate back' },
-        { name: 'DB Split Squats', sets: '3×10/side', note: 'Stability + health. No bracing.' },
         { name: 'DB Single-Leg RDL', sets: '3×12/side', note: 'Posterior chain. Back health.' },
-        { name: 'Machine Lateral Raise', sets: '3×15', note: 'Maintain shoulder volume' },
+        { name: 'DB Split Squats', sets: '3×10/side', note: 'Stability + health. No bracing.', group: 'A' },
+        { name: 'Machine Lateral Raise', sets: '3×15', note: 'Maintain shoulder volume', group: 'A' },
       ],
     },
     {
@@ -64,25 +61,23 @@ const Reunions = {
     },
     {
       name: 'V-TAPER SPEC', subtitle: 'Weighted Pulls + Width', muscles: 'Lats · Shoulders · Upper Chest', type: 'lifting',
-      warmup: { label: '10 min Zone 2', note: 'Erg preferred. Prime the pulls.' },
-      cooldown: { label: '5 min Zone 2', note: 'Easy spin.' },
+      warmup: { label: '15 min Zone 2', note: 'Erg preferred. Prime the pulls.' },
       exercises: [
         { name: 'Weighted Pull-ups', sets: '4×6-10', note: 'Width specialization' },
         { name: 'Lat Pulldown (Wide)', sets: '3×12-15', note: 'Control the eccentric' },
-        { name: 'Cable Lateral Raise (Behind Back)', sets: '4×15', note: 'Max stretch on delt' },
-        { name: 'Low-to-High Cable Fly', sets: '3×15', note: 'Upper chest shelf' },
-        { name: 'Overhead Tricep Extension', sets: '3×12', note: 'Long head focus' },
-        { name: 'Preacher Curls', sets: '3×12', note: 'Peak contraction' },
+        { name: 'Cable Lateral Raise (Behind Back)', sets: '4×15', note: 'Max stretch on delt', group: 'A' },
+        { name: 'Low-to-High Cable Fly', sets: '3×15', note: 'Upper chest shelf', group: 'A' },
+        { name: 'Overhead Tricep Extension', sets: '3×12', note: 'Long head focus', group: 'B' },
+        { name: 'Preacher Curls', sets: '3×12', note: 'Peak contraction', group: 'B' },
       ],
     },
     {
       name: 'PUSH B (HOME)', subtitle: 'Ring Dips + Upper Chest', muscles: 'Chest · Shoulders · Triceps', type: 'lifting',
-      warmup: { label: '10 min Zone 2', note: 'Erg or brisk walk.' },
-      cooldown: { label: '5 min Zone 2', note: 'Easy spin.' },
+      warmup: { label: '15 min Zone 2', note: 'Erg or brisk walk.' },
       exercises: [
         { name: 'Ring Dips', sets: '4×8-12', note: 'Deep stretch' },
-        { name: 'Ring Pushups', sets: '3×Max', note: 'Squeeze rings at top' },
-        { name: 'DB Lateral Raise', sets: '4×15-20', note: 'Width finisher' },
+        { name: 'Ring Pushups', sets: '3×Max', note: 'Squeeze rings at top', group: 'A' },
+        { name: 'DB Lateral Raise', sets: '4×15-20', note: 'Width finisher', group: 'A' },
         { name: 'Overhead DB Tricep Ext', sets: '3×12', note: 'Home isolation' },
       ],
     },
@@ -356,18 +351,39 @@ const Reunions = {
       todayEntry.exercises.forEach(e => { liveMap[e.name] = e.sets; });
     }
 
-    // Exercises — live entry wins over historical prefill when present
-    const exerciseList = (todayEntry && todayEntry.exercises && todayEntry.exercises.length) 
-      ? todayEntry.exercises.map((e, idx) => ({ ...e, setsConfig: workout.exercises[idx]?.sets || '3x10', note: workout.exercises[idx]?.note || '' }))
+    // Exercises — live entry wins over historical prefill when present.
+    // Always pull group/note/setsConfig from the canonical workout definition
+    // (the saved live entry only stores name + sets data).
+    const exerciseList = (todayEntry && todayEntry.exercises && todayEntry.exercises.length)
+      ? todayEntry.exercises.map((e, idx) => {
+          const def = workout.exercises.find(w => w.name === e.name) || workout.exercises[idx];
+          return {
+            ...e,
+            setsConfig: def?.sets || '3x10',
+            note: def?.note || '',
+            group: def?.group,
+          };
+        })
       : workout.exercises.map(e => ({ ...e, setsConfig: e.sets }));
 
+    // Group consecutive same-group exercises into superset blocks
+    const blocks = [];
     exerciseList.forEach(ex => {
+      const last = blocks[blocks.length - 1];
+      if (ex.group && last && last.group === ex.group) {
+        last.items.push(ex);
+      } else {
+        blocks.push({ group: ex.group || null, items: [ex] });
+      }
+    });
+
+    const renderExercise = (ex) => {
       const numSets = this._parseSets(ex.setsConfig);
       const prefillSets = liveMap[ex.name] || prefillMap[ex.name];
       const baseline = this.data.baselines[ex.name];
       const baselineStr = baseline ? `${baseline.weight}x${baseline.reps}` : '—';
 
-      html += `
+      let out = `
         <div class="r-exercise">
           <div class="r-ex-top">
             <span class="r-ex-name" contenteditable="true" onblur="Reunions._saveTodayInput()">${ex.name}</span>
@@ -380,12 +396,12 @@ const Reunions = {
       `;
 
       if (numSets) {
-        html += '<div class="r-sets">';
+        out += '<div class="r-sets">';
         for (let s = 0; s < numSets; s++) {
           const pf = prefillSets && prefillSets[s];
           const wv = pf && pf.weight ? pf.weight : '';
           const rv = pf && pf.reps ? pf.reps : '';
-          html += `
+          out += `
             <div class="r-set-row">
               <span class="r-set-num">${s + 1}</span>
               <div class="r-set-field">
@@ -399,21 +415,28 @@ const Reunions = {
             </div>
           `;
         }
-        html += '</div>';
+        out += '</div>';
       }
+      out += '</div>';
+      return out;
+    };
 
-      html += '</div>';
+    blocks.forEach(block => {
+      if (block.group && block.items.length > 1) {
+        const names = block.items.map((it, i) => `${block.group}${i + 1}`).join(' + ');
+        html += `
+          <div class="r-superset">
+            <div class="r-superset-label">
+              <span class="r-superset-tag">SUPERSET ${names}</span>
+              <span class="r-superset-hint">Alternate back-to-back · rest only after both</span>
+            </div>
+        `;
+        block.items.forEach(ex => { html += renderExercise(ex); });
+        html += '</div>';
+      } else {
+        block.items.forEach(ex => { html += renderExercise(ex); });
+      }
     });
-
-    // Cardio cooldown banner (lifting days)
-    if (workout.cooldown) {
-      html += `
-        <div class="r-cardio-banner r-cardio-cooldown">
-          <span class="r-cardio-label">COOLDOWN · ${workout.cooldown.label}</span>
-          <span class="r-cardio-note">${workout.cooldown.note}</span>
-        </div>
-      `;
-    }
 
     // Mark complete button
     html += `
@@ -485,22 +508,20 @@ const Reunions = {
             </div>
           `;
         }
+        let lastGroup = null;
         day.exercises.forEach(ex => {
+          if (ex.group && ex.group !== lastGroup) {
+            html += `<div class="r-plan-superset-tag">SUPERSET ${ex.group}</div>`;
+          }
+          lastGroup = ex.group || null;
+          const cls = ex.group ? 'r-plan-ex r-plan-ex-grouped' : 'r-plan-ex';
           html += `
-            <div class="r-plan-ex">
+            <div class="${cls}">
               <span class="r-plan-ex-name">${ex.name}</span>
               <span class="r-plan-ex-sets">${ex.sets}</span>
             </div>
           `;
         });
-        if (day.cooldown) {
-          html += `
-            <div class="r-plan-ex r-plan-cardio">
-              <span class="r-plan-ex-name">Cooldown · Zone 2</span>
-              <span class="r-plan-ex-sets">${day.cooldown.label}</span>
-            </div>
-          `;
-        }
         html += '</div>';
       }
     });
