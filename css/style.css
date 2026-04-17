@@ -890,6 +890,106 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
   color: var(--text2);
 }
 
+/* Day navigation bar (Today view) */
+.r-day-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 8px;
+  margin: 0 0 8px 4px;
+}
+.r-day-nav-arrow {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: var(--text);
+  background: var(--surface2);
+  flex-shrink: 0;
+}
+.r-day-nav-arrow:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.r-day-nav-arrow:not(:disabled):active { background: var(--accent)30; }
+.r-day-nav-center {
+  text-align: center;
+  flex: 1;
+  min-width: 0;
+}
+.r-day-nav-label {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+}
+.r-day-nav-date {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 1px;
+}
+.r-jump-today {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 8px;
+  margin: 0 0 8px 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: var(--accent);
+  background: var(--accent)10;
+  border: 1px dashed var(--accent)40;
+  border-radius: 6px;
+}
+.r-jump-today:active { background: var(--accent)25; }
+
+/* Readonly set rows (preview mode) */
+.r-set-row-readonly .r-set-field-readonly {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.r-set-value {
+  width: 60px;
+  height: 36px;
+  line-height: 36px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text2);
+}
+
+/* Readonly cardio log values */
+.r-cardio-log-ro {
+  height: 36px;
+  line-height: 36px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+}
+.r-cardio-log-ro-notes {
+  margin-top: 8px;
+  padding: 8px 10px;
+  font-size: 0.8rem;
+  color: var(--text2);
+  font-style: italic;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
 /* Cardio log input card (cardio + recovery days) */
 .r-cardio-log {
   background: var(--surface);

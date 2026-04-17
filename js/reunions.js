@@ -4,7 +4,7 @@
 const Reunions = {
   view: 'today',
   data: null,
-  expandedDay: null,
+  viewDay: null, // null = real today; otherwise an absolute dayNum 0..48
 
   TARGET: new Date('2026-05-21T00:00:00'),
   START: new Date('2026-04-13T00:00:00'),
@@ -117,6 +117,11 @@ const Reunions = {
     return this.data.workoutLog.find(w => w.dayNum === today) || null;
   },
 
+  _getEntryForDay(dayNum) {
+    if (!this.data.workoutLog) return null;
+    return this.data.workoutLog.find(w => w.dayNum === dayNum) || null;
+  },
+
   // ===== STORAGE =====
   _load() {
     try {
@@ -179,6 +184,8 @@ const Reunions = {
   },
 
   _saveTodayInput() {
+    // Live save is only valid when the Today tab is showing real today.
+    if (this.viewDay !== null && this.viewDay !== this.getDayNum()) return;
     const d = this.getDayNum();
     const workout = this.SPLIT[d % 7];
     const exercises = this._collectTodayInputs();
@@ -252,6 +259,16 @@ const Reunions = {
     return Math.max(0, Math.floor((new Date() - this.START) / 86400000));
   },
 
+  getActiveDayNum() {
+    return this.viewDay ?? this.getDayNum();
+  },
+
+  getDayDate(dayNum) {
+    const d = new Date(this.START);
+    d.setDate(d.getDate() + dayNum);
+    return d;
+  },
+
   getDaysLeft() {
     return Math.max(0, Math.ceil((this.TARGET - new Date()) / 86400000));
   },
@@ -289,48 +306,89 @@ const Reunions = {
 
   // ===== MAIN RENDER =====
   render() {
-    const dayNum = this.getDayNum();
+    const todayNum = this.getDayNum();
+    const activeNum = this.getActiveDayNum();
     const daysLeft = this.getDaysLeft();
-    const week = this.getWeek(dayNum);
+    // Header week/phase reflect the day currently being viewed; overall
+    // progress + days-left always reflect real today.
+    const headerDay = (this.view === 'today') ? activeNum : todayNum;
+    const week = this.getWeek(headerDay);
     const phase = this.getPhase(week);
 
-    // Header
     document.getElementById('r-days-left').textContent = daysLeft;
     document.getElementById('r-week').textContent = `WK ${week}/7`;
     document.getElementById('r-phase').textContent = phase.name;
     document.getElementById('r-progress').style.width =
-      Math.min(100, (dayNum / 49) * 100) + '%';
+      Math.min(100, (todayNum / 49) * 100) + '%';
 
-    // Tabs
     document.querySelectorAll('.r-tab').forEach(t =>
       t.classList.toggle('active', t.dataset.view === this.view)
     );
 
-    // Body
     const body = document.getElementById('r-body');
     switch (this.view) {
-      case 'today': this._renderToday(body, dayNum, week, phase); break;
-      case 'plan': this._renderPlan(body, dayNum); break;
-      case 'checkin': this._renderCheckin(body, week); break;
+      case 'today': this._renderToday(body, activeNum, week, phase); break;
+      case 'plan': this._renderPlan(body, todayNum); break;
+      case 'checkin': this._renderCheckin(body, this.getWeek(todayNum)); break;
       case 'log': this._renderLog(body); break;
     }
   },
 
   setView(v) {
+    // Tapping the Today tab always resets to real today.
+    if (v === 'today') this.viewDay = null;
     this.view = v;
     this.render();
+  },
+
+  // ===== DAY NAVIGATION =====
+  goToDay(day) {
+    const today = this.getDayNum();
+    const bounded = Math.max(0, Math.min(48, day));
+    this.viewDay = (bounded === today) ? null : bounded;
+    this.view = 'today';
+    this.render();
+  },
+
+  goPrevDay() { this.goToDay(this.getActiveDayNum() - 1); },
+  goNextDay() { this.goToDay(this.getActiveDayNum() + 1); },
+  goToToday() { this.viewDay = null; this.view = 'today'; this.render(); },
+
+  // Jump to the nearest upcoming occurrence of a split index (0-6).
+  // If today is already that split, stays on today.
+  goToSplitDay(splitIdx) {
+    const today = this.getDayNum();
+    const offset = (splitIdx - (today % 7) + 7) % 7;
+    this.goToDay(today + offset);
   },
 
   // ===== TODAY =====
   _renderToday(el, dayNum, week, phase) {
     const workout = this.SPLIT[dayNum % 7];
     const done = this.isCompleted(dayNum);
+    const todayNum = this.getDayNum();
+    const editable = dayNum === todayNum;
+    const isPast = dayNum < todayNum;
+    const isFuture = dayNum > todayNum;
+    const date = this.getDayDate(dayNum);
+    const dateStr = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    const prevDisabled = dayNum <= 0 ? 'disabled' : '';
+    const nextDisabled = dayNum >= 48 ? 'disabled' : '';
 
     let html = `
+      <div class="r-day-nav">
+        <button class="r-day-nav-arrow" onclick="Reunions.goPrevDay()" ${prevDisabled} aria-label="Previous day">◀</button>
+        <div class="r-day-nav-center">
+          <div class="r-day-nav-label">${editable ? 'TODAY' : (isPast ? 'PAST' : 'UPCOMING')}</div>
+          <div class="r-day-nav-date">${dateStr}</div>
+        </div>
+        <button class="r-day-nav-arrow" onclick="Reunions.goNextDay()" ${nextDisabled} aria-label="Next day">▶</button>
+      </div>
+      ${!editable ? `<button class="r-jump-today" onclick="Reunions.goToToday()">Jump back to today →</button>` : ''}
       <div class="r-today-card">
         <div class="r-today-top">
           <span class="r-day-label">DAY ${dayNum + 1}</span>
-          <span class="r-status-pill ${done ? 'done' : ''}">${done ? 'DONE' : 'PENDING'}</span>
+          <span class="r-status-pill ${done ? 'done' : ''}">${done ? 'DONE' : (isFuture ? 'PLANNED' : 'PENDING')}</span>
         </div>
         <div class="r-today-name">${workout.name}</div>
         <div class="r-today-sub">${workout.subtitle}</div>
@@ -358,24 +416,24 @@ const Reunions = {
       `;
     }
 
-    // Today's in-progress entry is the source of truth for current inputs.
-    // Fallback: prefill from last completed session of the same split day.
-    const lastLog = this._getLastLog(dayNum % 7);
+    // Prefill from last completed session of the same split day (for editable today).
+    // Preview mode uses the specific day's logged entry if it exists.
+    const lastLog = editable ? this._getLastLog(dayNum % 7) : null;
     const prefillMap = {};
     if (lastLog && lastLog.exercises) {
       lastLog.exercises.forEach(e => { prefillMap[e.name] = e.sets; });
     }
-    const todayEntry = this._getTodayEntry();
+    const activeEntry = editable ? this._getTodayEntry() : this._getEntryForDay(dayNum);
     const liveMap = {};
-    if (todayEntry && todayEntry.exercises) {
-      todayEntry.exercises.forEach(e => { liveMap[e.name] = e.sets; });
+    if (activeEntry && activeEntry.exercises) {
+      activeEntry.exercises.forEach(e => { liveMap[e.name] = e.sets; });
     }
 
-    // Exercises — live entry wins over historical prefill when present.
+    // Exercises — saved entry wins over historical prefill when present.
     // Always pull group/note/setsConfig from the canonical workout definition
-    // (the saved live entry only stores name + sets data).
-    const exerciseList = (todayEntry && todayEntry.exercises && todayEntry.exercises.length)
-      ? todayEntry.exercises.map((e, idx) => {
+    // (the saved entry only stores name + sets data).
+    const exerciseList = (activeEntry && activeEntry.exercises && activeEntry.exercises.length)
+      ? activeEntry.exercises.map((e, idx) => {
           const def = workout.exercises.find(w => w.name === e.name) || workout.exercises[idx];
           return {
             ...e,
@@ -402,16 +460,20 @@ const Reunions = {
       const prefillSets = liveMap[ex.name] || prefillMap[ex.name];
       const baseline = this.data.baselines[ex.name];
       const baselineStr = baseline ? `${baseline.weight}x${baseline.reps}` : '—';
+      const nameAttrs = editable ? `contenteditable="true" onblur="Reunions._saveTodayInput()"` : '';
+      const baselineEl = editable
+        ? `<span class="r-baseline" onclick="Reunions.editBaseline('${ex.name.replace(/'/g, "\\'")}')">Best: ${baselineStr}</span>`
+        : `<span class="r-baseline">Best: ${baselineStr}</span>`;
 
       let out = `
         <div class="r-exercise">
           <div class="r-ex-top">
-            <span class="r-ex-name" contenteditable="true" onblur="Reunions._saveTodayInput()">${ex.name}</span>
+            <span class="r-ex-name" ${nameAttrs}>${ex.name}</span>
             <span class="r-ex-sets">${ex.setsConfig}</span>
           </div>
           <div class="r-ex-note">
             <span>${ex.note}</span>
-            <span class="r-baseline" onclick="Reunions.editBaseline('${ex.name.replace(/'/g, "\\'")}')">Best: ${baselineStr}</span>
+            ${baselineEl}
           </div>
       `;
 
@@ -421,19 +483,35 @@ const Reunions = {
           const pf = prefillSets && prefillSets[s];
           const wv = pf && pf.weight ? pf.weight : '';
           const rv = pf && pf.reps ? pf.reps : '';
-          out += `
-            <div class="r-set-row">
-              <span class="r-set-num">${s + 1}</span>
-              <div class="r-set-field">
-                <input type="number" inputmode="decimal" class="r-set-wt" placeholder="—" value="${wv}" step="2.5" oninput="Reunions._saveTodayInput()" onchange="Reunions._saveTodayInput()" onblur="Reunions._saveTodayInput()">
-                <span class="r-set-unit">lbs</span>
+          if (editable) {
+            out += `
+              <div class="r-set-row">
+                <span class="r-set-num">${s + 1}</span>
+                <div class="r-set-field">
+                  <input type="number" inputmode="decimal" class="r-set-wt" placeholder="—" value="${wv}" step="2.5" oninput="Reunions._saveTodayInput()" onchange="Reunions._saveTodayInput()" onblur="Reunions._saveTodayInput()">
+                  <span class="r-set-unit">lbs</span>
+                </div>
+                <div class="r-set-field">
+                  <input type="number" inputmode="numeric" class="r-set-rp" placeholder="—" value="${rv}" oninput="Reunions._saveTodayInput()" onchange="Reunions._saveTodayInput()" onblur="Reunions._saveTodayInput()">
+                  <span class="r-set-unit">reps</span>
+                </div>
               </div>
-              <div class="r-set-field">
-                <input type="number" inputmode="numeric" class="r-set-rp" placeholder="—" value="${rv}" oninput="Reunions._saveTodayInput()" onchange="Reunions._saveTodayInput()" onblur="Reunions._saveTodayInput()">
-                <span class="r-set-unit">reps</span>
+            `;
+          } else {
+            out += `
+              <div class="r-set-row r-set-row-readonly">
+                <span class="r-set-num">${s + 1}</span>
+                <div class="r-set-field-readonly">
+                  <span class="r-set-value">${wv || '—'}</span>
+                  <span class="r-set-unit">lbs</span>
+                </div>
+                <div class="r-set-field-readonly">
+                  <span class="r-set-value">${rv || '—'}</span>
+                  <span class="r-set-unit">reps</span>
+                </div>
               </div>
-            </div>
-          `;
+            `;
+          }
         }
         out += '</div>';
       }
@@ -460,41 +538,57 @@ const Reunions = {
 
     // Cardio log (cardio / recovery day types only)
     if (this._isCardioDay(workout)) {
-      const c = (todayEntry && todayEntry.cardio) || {};
-      html += `
-        <div class="r-cardio-log">
-          <div class="r-cardio-log-title">CARDIO LOG</div>
-          <div class="r-cardio-log-grid">
-            <label class="r-cardio-log-field">
-              <span>AVG PACE</span>
-              <input id="r-cardio-pace" type="text" placeholder="2:10/500m" value="${c.pace || ''}" oninput="Reunions._saveTodayInput()" onblur="Reunions._saveTodayInput()">
-            </label>
-            <label class="r-cardio-log-field">
-              <span>AVG HR</span>
-              <input id="r-cardio-avg-hr" type="number" inputmode="numeric" placeholder="138" value="${c.avgHR || ''}" oninput="Reunions._saveTodayInput()" onblur="Reunions._saveTodayInput()">
-            </label>
-            <label class="r-cardio-log-field">
-              <span>MAX HR</span>
-              <input id="r-cardio-max-hr" type="number" inputmode="numeric" placeholder="168" value="${c.maxHR || ''}" oninput="Reunions._saveTodayInput()" onblur="Reunions._saveTodayInput()">
-            </label>
+      const c = (activeEntry && activeEntry.cardio) || {};
+      if (editable) {
+        html += `
+          <div class="r-cardio-log">
+            <div class="r-cardio-log-title">CARDIO LOG</div>
+            <div class="r-cardio-log-grid">
+              <label class="r-cardio-log-field">
+                <span>AVG PACE</span>
+                <input id="r-cardio-pace" type="text" placeholder="2:10/500m" value="${c.pace || ''}" oninput="Reunions._saveTodayInput()" onblur="Reunions._saveTodayInput()">
+              </label>
+              <label class="r-cardio-log-field">
+                <span>AVG HR</span>
+                <input id="r-cardio-avg-hr" type="number" inputmode="numeric" placeholder="138" value="${c.avgHR || ''}" oninput="Reunions._saveTodayInput()" onblur="Reunions._saveTodayInput()">
+              </label>
+              <label class="r-cardio-log-field">
+                <span>MAX HR</span>
+                <input id="r-cardio-max-hr" type="number" inputmode="numeric" placeholder="168" value="${c.maxHR || ''}" oninput="Reunions._saveTodayInput()" onblur="Reunions._saveTodayInput()">
+              </label>
+            </div>
+            <textarea id="r-cardio-notes" class="r-cardio-log-notes" placeholder="Intervals, peaks per 4-min, how it felt..." oninput="Reunions._saveTodayInput()" onblur="Reunions._saveTodayInput()">${c.notes || ''}</textarea>
           </div>
-          <textarea id="r-cardio-notes" class="r-cardio-log-notes" placeholder="Intervals, peaks per 4-min, how it felt..." oninput="Reunions._saveTodayInput()" onblur="Reunions._saveTodayInput()">${c.notes || ''}</textarea>
-        </div>
+        `;
+      } else if (c.pace || c.avgHR || c.maxHR || c.notes) {
+        html += `
+          <div class="r-cardio-log">
+            <div class="r-cardio-log-title">CARDIO LOG</div>
+            <div class="r-cardio-log-grid">
+              <div class="r-cardio-log-field"><span>AVG PACE</span><div class="r-cardio-log-ro">${c.pace || '—'}</div></div>
+              <div class="r-cardio-log-field"><span>AVG HR</span><div class="r-cardio-log-ro">${c.avgHR || '—'}</div></div>
+              <div class="r-cardio-log-field"><span>MAX HR</span><div class="r-cardio-log-ro">${c.maxHR || '—'}</div></div>
+            </div>
+            ${c.notes ? `<div class="r-cardio-log-ro-notes">${c.notes}</div>` : ''}
+          </div>
+        `;
+      }
+    }
+
+    // Mark complete button — only on today
+    if (editable) {
+      html += `
+        <button class="r-complete-btn ${done ? 'done' : ''}" onclick="Reunions.toggleComplete()">
+          ${done ? '✓ COMPLETED' : 'MARK COMPLETE'}
+        </button>
       `;
     }
 
-    // Mark complete button
-    html += `
-      <button class="r-complete-btn ${done ? 'done' : ''}" onclick="Reunions.toggleComplete()">
-        ${done ? '✓ COMPLETED' : 'MARK COMPLETE'}
-      </button>
-    `;
-
-    // Stats
+    // Stats — always reflect real today (plan-wide progress)
     html += `
       <div class="r-stats">
         <div class="r-stat">
-          <div class="r-stat-val">${this.getCompletionRate(dayNum)}%</div>
+          <div class="r-stat-val">${this.getCompletionRate(todayNum)}%</div>
           <div class="r-stat-label">ADHERENCE</div>
         </div>
         <div class="r-stat">
@@ -531,44 +625,15 @@ const Reunions = {
 
     this.SPLIT.forEach((day, i) => {
       const isToday = i === todayIdx;
-      const expanded = this.expandedDay === i;
-
       html += `
-        <button class="r-plan-day ${isToday ? 'is-today' : ''}" onclick="Reunions.toggleDay(${i})">
+        <button class="r-plan-day ${isToday ? 'is-today' : ''}" onclick="Reunions.goToSplitDay(${i})">
           <div class="r-plan-day-info">
             <div class="r-plan-day-name">${isToday ? '▸ ' : ''}${day.name}</div>
             <div class="r-plan-day-muscles">${day.muscles}</div>
           </div>
-          <span class="r-tier-arrow">${expanded ? '▾' : '▸'}</span>
+          <span class="r-tier-arrow">▸</span>
         </button>
       `;
-
-      if (expanded) {
-        html += '<div class="r-plan-detail">';
-        if (day.warmup) {
-          html += `
-            <div class="r-plan-ex r-plan-cardio">
-              <span class="r-plan-ex-name">Warmup · Zone 2</span>
-              <span class="r-plan-ex-sets">${day.warmup.label}</span>
-            </div>
-          `;
-        }
-        let lastGroup = null;
-        day.exercises.forEach(ex => {
-          if (ex.group && ex.group !== lastGroup) {
-            html += `<div class="r-plan-superset-tag">SUPERSET ${ex.group}</div>`;
-          }
-          lastGroup = ex.group || null;
-          const cls = ex.group ? 'r-plan-ex r-plan-ex-grouped' : 'r-plan-ex';
-          html += `
-            <div class="${cls}">
-              <span class="r-plan-ex-name">${ex.name}</span>
-              <span class="r-plan-ex-sets">${ex.sets}</span>
-            </div>
-          `;
-        });
-        html += '</div>';
-      }
     });
 
     // Nutrition
@@ -803,11 +868,6 @@ const Reunions = {
         alert("Invalid format. Use '100x10'");
       }
     }
-  },
-
-  toggleDay(i) {
-    this.expandedDay = this.expandedDay === i ? null : i;
-    this.render();
   },
 
   submitCheckin(week) {
