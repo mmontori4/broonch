@@ -20,6 +20,8 @@ const Reunions = {
   SPLIT: [
     {
       name: 'PUSH + WIDTH', subtitle: 'Heavy Push + Side Delts', muscles: 'Chest · Shoulders · Triceps', type: 'lifting',
+      warmup: { label: '10 min Zone 2', note: 'Erg or brisk walk. Blood flow + joint prep.' },
+      cooldown: { label: '5 min Zone 2', note: 'Easy spin. Recovery flush.' },
       exercises: [
         { name: 'BB Bench Press', sets: '3×5-8', note: 'Heavy compound' },
         { name: 'Seated DB OHP', sets: '3×8-10', note: 'Vertical push base' },
@@ -30,6 +32,8 @@ const Reunions = {
     },
     {
       name: 'LAT WIDTH', subtitle: 'Ring Pulls + Lat Stretch', muscles: 'Lats · Biceps', type: 'lifting',
+      warmup: { label: '10 min Zone 2', note: 'Erg preferred. Primes lats and grip.' },
+      cooldown: { label: '5 min Zone 2', note: 'Easy spin.' },
       exercises: [
         { name: 'Ring Pull-ups', sets: '4×Max', note: 'Dead hang, full stretch' },
         { name: 'Ring Rows', sets: '3×12', note: 'Feet elevated' },
@@ -40,6 +44,8 @@ const Reunions = {
     },
     {
       name: 'THICKNESS/LEGS', subtitle: 'BB Rows + Health Legs', muscles: 'Back · Quads · Hamstrings', type: 'lifting',
+      warmup: { label: '10 min Zone 2', note: 'Erg or bike. Warm hips and low back.' },
+      cooldown: { label: '5 min Zone 2', note: 'Easy spin. Flush the legs.' },
       exercises: [
         { name: 'Barbell Row (Strict)', sets: '4×6-8', note: 'Mid-back thickness' },
         { name: 'Chest-Supported Row', sets: '3×10-12', note: 'Isolate back' },
@@ -58,6 +64,8 @@ const Reunions = {
     },
     {
       name: 'V-TAPER SPEC', subtitle: 'Weighted Pulls + Width', muscles: 'Lats · Shoulders · Upper Chest', type: 'lifting',
+      warmup: { label: '10 min Zone 2', note: 'Erg preferred. Prime the pulls.' },
+      cooldown: { label: '5 min Zone 2', note: 'Easy spin.' },
       exercises: [
         { name: 'Weighted Pull-ups', sets: '4×6-10', note: 'Width specialization' },
         { name: 'Lat Pulldown (Wide)', sets: '3×12-15', note: 'Control the eccentric' },
@@ -69,6 +77,8 @@ const Reunions = {
     },
     {
       name: 'PUSH B (HOME)', subtitle: 'Ring Dips + Upper Chest', muscles: 'Chest · Shoulders · Triceps', type: 'lifting',
+      warmup: { label: '10 min Zone 2', note: 'Erg or brisk walk.' },
+      cooldown: { label: '5 min Zone 2', note: 'Easy spin.' },
       exercises: [
         { name: 'Ring Dips', sets: '4×8-12', note: 'Deep stretch' },
         { name: 'Ring Pushups', sets: '3×Max', note: 'Squeeze rings at top' },
@@ -323,6 +333,16 @@ const Reunions = {
       `;
     }
 
+    // Cardio warmup banner (lifting days)
+    if (workout.warmup) {
+      html += `
+        <div class="r-cardio-banner r-cardio-warmup">
+          <span class="r-cardio-label">WARMUP · ${workout.warmup.label}</span>
+          <span class="r-cardio-note">${workout.warmup.note}</span>
+        </div>
+      `;
+    }
+
     // Today's in-progress entry is the source of truth for current inputs.
     // Fallback: prefill from last completed session of the same split day.
     const lastLog = this._getLastLog(dayNum % 7);
@@ -384,6 +404,16 @@ const Reunions = {
 
       html += '</div>';
     });
+
+    // Cardio cooldown banner (lifting days)
+    if (workout.cooldown) {
+      html += `
+        <div class="r-cardio-banner r-cardio-cooldown">
+          <span class="r-cardio-label">COOLDOWN · ${workout.cooldown.label}</span>
+          <span class="r-cardio-note">${workout.cooldown.note}</span>
+        </div>
+      `;
+    }
 
     // Mark complete button
     html += `
@@ -447,6 +477,14 @@ const Reunions = {
 
       if (expanded) {
         html += '<div class="r-plan-detail">';
+        if (day.warmup) {
+          html += `
+            <div class="r-plan-ex r-plan-cardio">
+              <span class="r-plan-ex-name">Warmup · Zone 2</span>
+              <span class="r-plan-ex-sets">${day.warmup.label}</span>
+            </div>
+          `;
+        }
         day.exercises.forEach(ex => {
           html += `
             <div class="r-plan-ex">
@@ -455,6 +493,14 @@ const Reunions = {
             </div>
           `;
         });
+        if (day.cooldown) {
+          html += `
+            <div class="r-plan-ex r-plan-cardio">
+              <span class="r-plan-ex-name">Cooldown · Zone 2</span>
+              <span class="r-plan-ex-sets">${day.cooldown.label}</span>
+            </div>
+          `;
+        }
         html += '</div>';
       }
     });
