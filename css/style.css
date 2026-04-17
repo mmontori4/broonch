@@ -890,6 +890,66 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
   color: var(--text2);
 }
 
+/* Cardio log input card (cardio + recovery days) */
+.r-cardio-log {
+  background: var(--surface);
+  border: 1px solid var(--blue)40;
+  border-left: 3px solid var(--blue);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin: 12px 0 0 4px;
+}
+.r-cardio-log-title {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--blue);
+  margin-bottom: 10px;
+}
+.r-cardio-log-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+.r-cardio-log-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.r-cardio-log-field > span {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: var(--text2);
+}
+.r-cardio-log-field input {
+  height: 36px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  padding: 0 6px;
+}
+.r-cardio-log-field input:focus {
+  border-color: var(--blue);
+  outline: none;
+}
+.r-cardio-log-notes {
+  width: 100%;
+  margin-top: 8px;
+  min-height: 60px;
+  font-size: 0.8rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+.r-cardio-log-notes:focus { border-color: var(--blue); outline: none; }
+
 /* Cardio warmup/cooldown banners */
 .r-cardio-banner {
   display: flex;
@@ -1171,20 +1231,37 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 
 /* Workout log cards */
 .r-wlog-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 12px 14px;
   margin-bottom: 6px;
 }
+.r-wlog-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .r-wlog-name { font-size: 0.9rem; font-weight: 600; }
 .r-wlog-sub { font-size: 0.7rem; color: var(--orange); margin-top: 2px; }
 .r-wlog-right { text-align: right; flex-shrink: 0; margin-left: 12px; }
 .r-wlog-date { font-size: 0.75rem; font-weight: 600; }
 .r-wlog-day { font-size: 0.6rem; color: var(--text2); margin-top: 2px; letter-spacing: 0.5px; }
+.r-wlog-cardio {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--blue);
+  letter-spacing: 0.3px;
+}
+.r-wlog-cardio-notes {
+  margin-top: 4px;
+  font-size: 0.7rem;
+  color: var(--text2);
+  font-style: italic;
+}
 
 /* Whoop integration */
 .r-whoop-bar {

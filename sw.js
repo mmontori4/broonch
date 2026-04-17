@@ -1,4 +1,4 @@
-const CACHE_NAME = 'broonch-v19';
+const CACHE_NAME = 'broonch-v20';
 const ASSETS = [
   './',
   './index.html',

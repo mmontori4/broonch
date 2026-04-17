@@ -161,11 +161,30 @@ const Reunions = {
     return exercises;
   },
 
+  _collectCardio() {
+    return {
+      pace: document.getElementById('r-cardio-pace')?.value.trim() || '',
+      avgHR: document.getElementById('r-cardio-avg-hr')?.value.trim() || '',
+      maxHR: document.getElementById('r-cardio-max-hr')?.value.trim() || '',
+      notes: document.getElementById('r-cardio-notes')?.value.trim() || '',
+    };
+  },
+
+  _cardioHasData(c) {
+    return !!(c && (c.pace || c.avgHR || c.maxHR || c.notes));
+  },
+
+  _isCardioDay(workout) {
+    return workout.type === 'cardio' || workout.type === 'recovery';
+  },
+
   _saveTodayInput() {
     const d = this.getDayNum();
     const workout = this.SPLIT[d % 7];
     const exercises = this._collectTodayInputs();
-    if (!exercises.length) return;
+    const cardio = this._isCardioDay(workout) ? this._collectCardio() : null;
+    const hasData = exercises.length || this._cardioHasData(cardio);
+    if (!hasData) return;
     let entry = this._getTodayEntry();
     if (!entry) {
       entry = {
@@ -181,6 +200,7 @@ const Reunions = {
       this.data.workoutLog.push(entry);
     }
     entry.exercises = exercises;
+    if (cardio) entry.cardio = cardio;
     this._save();
   },
 
@@ -438,6 +458,31 @@ const Reunions = {
       }
     });
 
+    // Cardio log (cardio / recovery day types only)
+    if (this._isCardioDay(workout)) {
+      const c = (todayEntry && todayEntry.cardio) || {};
+      html += `
+        <div class="r-cardio-log">
+          <div class="r-cardio-log-title">CARDIO LOG</div>
+          <div class="r-cardio-log-grid">
+            <label class="r-cardio-log-field">
+              <span>AVG PACE</span>
+              <input id="r-cardio-pace" type="text" placeholder="2:10/500m" value="${c.pace || ''}" oninput="Reunions._saveTodayInput()" onblur="Reunions._saveTodayInput()">
+            </label>
+            <label class="r-cardio-log-field">
+              <span>AVG HR</span>
+              <input id="r-cardio-avg-hr" type="number" inputmode="numeric" placeholder="138" value="${c.avgHR || ''}" oninput="Reunions._saveTodayInput()" onblur="Reunions._saveTodayInput()">
+            </label>
+            <label class="r-cardio-log-field">
+              <span>MAX HR</span>
+              <input id="r-cardio-max-hr" type="number" inputmode="numeric" placeholder="168" value="${c.maxHR || ''}" oninput="Reunions._saveTodayInput()" onblur="Reunions._saveTodayInput()">
+            </label>
+          </div>
+          <textarea id="r-cardio-notes" class="r-cardio-log-notes" placeholder="Intervals, peaks per 4-min, how it felt..." oninput="Reunions._saveTodayInput()" onblur="Reunions._saveTodayInput()">${c.notes || ''}</textarea>
+        </div>
+      `;
+    }
+
     // Mark complete button
     html += `
       <button class="r-complete-btn ${done ? 'done' : ''}" onclick="Reunions.toggleComplete()">
@@ -613,16 +658,30 @@ const Reunions = {
       [...completedWorkouts].reverse().forEach(w => {
         const d = new Date(w.date);
         const dayStr = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+        const c = w.cardio;
+        const cardioBits = c
+          ? [c.pace, c.avgHR && `${c.avgHR} bpm avg`, c.maxHR && `${c.maxHR} max`].filter(Boolean)
+          : [];
+        const cardioStrip = cardioBits.length
+          ? `<div class="r-wlog-cardio">${cardioBits.join(' · ')}</div>`
+          : '';
+        const cardioNotes = c && c.notes
+          ? `<div class="r-wlog-cardio-notes">${c.notes}</div>`
+          : '';
         html += `
           <div class="r-wlog-card">
-            <div class="r-wlog-left">
-              <div class="r-wlog-name">${w.name}</div>
-              <div class="r-wlog-sub">${w.subtitle}</div>
+            <div class="r-wlog-row">
+              <div class="r-wlog-left">
+                <div class="r-wlog-name">${w.name}</div>
+                <div class="r-wlog-sub">${w.subtitle}</div>
+              </div>
+              <div class="r-wlog-right">
+                <div class="r-wlog-date">${dayStr}</div>
+                <div class="r-wlog-day">Day ${w.dayNum + 1} · Wk ${w.week}</div>
+              </div>
             </div>
-            <div class="r-wlog-right">
-              <div class="r-wlog-date">${dayStr}</div>
-              <div class="r-wlog-day">Day ${w.dayNum + 1} · Wk ${w.week}</div>
-            </div>
+            ${cardioStrip}
+            ${cardioNotes}
           </div>
         `;
       });
@@ -683,6 +742,10 @@ const Reunions = {
         this.data.workoutLog.push(entry);
       }
       entry.exercises = this._collectTodayInputs();
+      if (this._isCardioDay(workout)) {
+        const cardio = this._collectCardio();
+        if (this._cardioHasData(cardio)) entry.cardio = cardio;
+      }
       entry.complete = true;
       entry.date = new Date().toISOString();
       if (!this.data.completedDays.includes(d)) this.data.completedDays.push(d);
