@@ -7,94 +7,80 @@ const Reunions = {
   expandedDay: null,
 
   TARGET: new Date('2026-05-21T00:00:00'),
-  START: new Date('2026-04-06T00:00:00'),
+  START: new Date('2026-04-13T00:00:00'),
 
   PHASES: [
-    { weeks: [1, 2], name: 'REBUILD', rpe: '7-8', rpeCue: '2-3 reps left in the tank. Learning weights.', desc: 'Full upper body. Legs: machines only (extensions, curls, calves).' },
-    { weeks: [3, 4, 5], name: 'RAMP', rpe: '8-9', rpeCue: '1-2 reps left. Pushing hard.', desc: 'Add compound legs (leg press). Push upper body weights up.' },
-    { weeks: [6, 7], name: 'PEAK', rpe: '9-10', rpeCue: 'Last rep is a grind. Leave nothing.', desc: 'Full intensity. Heavy legs if cleared. Taper into Reunions.' },
+    { weeks: [1], name: 'RAMP UP', rpe: '7-8', rpeCue: 'Finding weights. Focus on form.', desc: 'Introduce hybrid structure. Establish baselines.' },
+    { weeks: [2, 3], name: 'THE GRIND', rpe: '8-9', rpeCue: 'Progressive overload. Add weight/reps.', desc: 'Push volume on rings and heavy compounds.' },
+    { weeks: [4], name: 'INTENSE', rpe: '9', rpeCue: 'High volume. 1 rep in reserve.', desc: 'Add VO2 Max protocol. Maximum width focus.' },
+    { weeks: [5], name: 'PEAK', rpe: '9-10', rpeCue: 'Leave nothing. Chase the pump.', desc: 'Final push before taper. Full effort.' },
+    { weeks: [6], name: 'TAPER', rpe: '6-7', rpeCue: 'Active recovery. Stay fresh.', desc: 'Maintenance only. Arrive full, not flat.' },
   ],
 
   SPLIT: [
     {
-      name: 'PUSH A', subtitle: 'Chest & Shoulders', muscles: 'Chest · Delts · Triceps', type: 'lifting',
+      name: 'PUSH + WIDTH', subtitle: 'Heavy Push + Side Delts', muscles: 'Chest · Shoulders · Triceps', type: 'lifting',
       exercises: [
-        { name: 'Barbell Bench Press', sets: '4×6-8', note: 'Controlled descent, drive through' },
-        { name: 'Incline DB Press (30°)', sets: '3×10-12', note: 'Upper chest emphasis' },
-        { name: 'Cable Flyes (low-to-high)', sets: '3×12-15', note: 'Squeeze 1s at peak' },
-        { name: 'Machine Shoulder Press', sets: '3×8-10', note: 'Push hard, controlled descent' },
-        { name: 'Cable Lateral Raise', sets: '4×12-15', note: 'Slight lean away, slow negative' },
-        { name: 'Rope Pushdowns', sets: '3×12-15', note: 'Split at bottom, squeeze tris' },
+        { name: 'BB Bench Press', sets: '3×5-8', note: 'Heavy compound' },
+        { name: 'Seated DB OHP', sets: '3×8-10', note: 'Vertical push base' },
+        { name: 'Incline DB Press', sets: '3×10-12', note: 'Upper chest shelf' },
+        { name: 'Cable Lateral Raise', sets: '4×15', note: 'Constant tension. Width focus.' },
+        { name: 'Tricep Cable Pushdown', sets: '3×12-15', note: 'Full extension' },
       ],
     },
     {
-      name: 'PULL A', subtitle: 'Back Width & Biceps', muscles: 'Lats · Rear Delts · Biceps · Hamstrings', type: 'lifting',
+      name: 'LAT WIDTH', subtitle: 'Ring Pulls + Lat Stretch', muscles: 'Lats · Biceps', type: 'lifting',
       exercises: [
-        { name: 'Pull-ups (weighted if able)', sets: '4×6-10', note: 'Add weight when bodyweight is easy' },
-        { name: 'Seated Cable Row', sets: '4×10-12', note: 'Squeeze shoulder blades' },
-        { name: 'Lat Pulldown (wide)', sets: '3×10-12', note: 'Full stretch at top' },
-        { name: 'Face Pulls', sets: '3×15-20', note: 'External rotate at top. Posture gains.' },
-        { name: 'Incline DB Curl', sets: '3×10-12', note: 'Full stretch at bottom' },
-        { name: 'Hammer Curls', sets: '3×12-15', note: 'Brachialis = arm width' },
-        { name: 'Leg Curl (lying)', sets: '3×12-15', note: 'Hamstrings, zero core demand' },
-        { name: 'Standing Calf Raise', sets: '3×15-20', note: 'Full stretch at bottom' },
+        { name: 'Ring Pull-ups', sets: '4×Max', note: 'Dead hang, full stretch' },
+        { name: 'Ring Rows', sets: '3×12', note: 'Feet elevated' },
+        { name: 'DB Lat Pullovers', sets: '3×12-15', note: 'Stretch-mediated hypertrophy' },
+        { name: 'DB Curls', sets: '3×12-15', note: 'Standard or incline' },
+        { name: 'DB Hammer Curls', sets: '3×12', note: 'Brachialis focus' },
       ],
     },
     {
-      name: 'ARMS & DELTS', subtitle: 'Vanity Day', muscles: 'Biceps · Triceps · All 3 Delt Heads', type: 'lifting',
+      name: 'THICKNESS/LEGS', subtitle: 'BB Rows + Health Legs', muscles: 'Back · Quads · Hamstrings', type: 'lifting',
       exercises: [
-        { name: 'Cable Lateral Raise', sets: '4×12-15', note: 'Behind-body angle. Money exercise.' },
-        { name: 'Rear Delt Fly (pec deck reverse)', sets: '4×15-20', note: 'Light, high rep, full squeeze' },
-        { name: 'Cable Curl (bar)', sets: '4×10-12', note: 'Strict, no swing' },
-        { name: 'Spider Curls (incline bench)', sets: '3×12-15', note: 'Peak contraction focus' },
-        { name: 'Overhead Cable Extension', sets: '4×10-12', note: 'Long head stretch' },
-        { name: 'Reverse Grip Pushdown', sets: '3×12-15', note: 'Medial head, arm detail' },
-        { name: 'Reverse Curl (EZ bar)', sets: '2×12-15', note: 'Forearm pop' },
+        { name: 'Barbell Row (Strict)', sets: '4×6-8', note: 'Mid-back thickness' },
+        { name: 'Chest-Supported Row', sets: '3×10-12', note: 'Isolate back' },
+        { name: 'DB Split Squats', sets: '3×10/side', note: 'Stability + health. No bracing.' },
+        { name: 'DB Single-Leg RDL', sets: '3×12/side', note: 'Posterior chain. Back health.' },
+        { name: 'Machine Lateral Raise', sets: '3×15', note: 'Maintain shoulder volume' },
       ],
     },
     {
-      name: 'PUSH B', subtitle: 'Shoulder Focus', muscles: 'Delts · Chest · Triceps · Quads', type: 'lifting',
+      name: 'CARDIO + WIDTH', subtitle: 'Z2 Erg + Side Delt Mini', muscles: 'Cardio · Side Delts', type: 'cardio',
       exercises: [
-        { name: 'Seated DB Shoulder Press', sets: '4×8-10', note: 'Supported back, go heavy' },
-        { name: 'Cable Lateral Raise', sets: '5×12-15', note: '5 sets. This is the move.' },
-        { name: 'Cable Chest Fly (mid-height)', sets: '4×12-15', note: 'Constant tension' },
-        { name: 'Front Raise (cable)', sets: '3×12-15', note: 'Anterior delt cap' },
-        { name: 'Dips (chest emphasis)', sets: '3×8-12', note: 'Forward lean' },
-        { name: 'Rope Pushdowns', sets: '3×12-15', note: 'Squeeze tris' },
-        { name: 'Leg Extension', sets: '3×12-15', note: 'Quad isolation, no pelvic load' },
+        { name: 'Zone 2 Erg', sets: '60 min', note: 'Talk test intensity' },
+        { name: 'DB Lateral Raise', sets: '5×15-20', note: 'Frequency for width' },
+        { name: 'Norwegian 4x4', sets: '4×4 min', note: 'WEEK 5+ ONLY. 90% HR.' },
       ],
     },
     {
-      name: 'PULL B', subtitle: 'Back Thickness & Arms', muscles: 'Rhomboids · Traps · Biceps · Forearms', type: 'lifting',
+      name: 'V-TAPER SPEC', subtitle: 'Weighted Pulls + Width', muscles: 'Lats · Shoulders · Upper Chest', type: 'lifting',
       exercises: [
-        { name: 'Chest-Supported T-Bar Row', sets: '4×8-10', note: 'Bench takes the load — go heavy' },
-        { name: 'Lat Pulldown (close/neutral)', sets: '4×10-12', note: 'Lean back slightly' },
-        { name: 'Chest-Supported DB Row', sets: '3×10-12', note: 'Unilateral, full squeeze' },
-        { name: 'Cable Shrug', sets: '3×12-15', note: 'Hold at top, trap thickness' },
-        { name: 'Barbell Curl', sets: '3×8-10', note: 'Strict form, no swing' },
-        { name: 'Hammer Curl (rope cable)', sets: '3×12-15', note: 'Constant tension variant' },
+        { name: 'Weighted Pull-ups', sets: '4×6-10', note: 'Width specialization' },
+        { name: 'Lat Pulldown (Wide)', sets: '3×12-15', note: 'Control the eccentric' },
+        { name: 'Cable Lateral Raise (Behind Back)', sets: '4×15', note: 'Max stretch on delt' },
+        { name: 'Low-to-High Cable Fly', sets: '3×15', note: 'Upper chest shelf' },
+        { name: 'Overhead Tricep Extension', sets: '3×12', note: 'Long head focus' },
+        { name: 'Preacher Curls', sets: '3×12', note: 'Peak contraction' },
       ],
     },
     {
-      name: 'LEGS + PUMP', subtitle: 'Lower Body & Conditioning', muscles: 'Quads · Hamstrings · Calves · Full Pump', type: 'conditioning',
+      name: 'PUSH B (HOME)', subtitle: 'Ring Dips + Upper Chest', muscles: 'Chest · Shoulders · Triceps', type: 'lifting',
       exercises: [
-        { name: 'Leg Extension', sets: '4×12-15', note: 'Quad isolation, no pelvic load' },
-        { name: 'Leg Curl (lying)', sets: '4×12-15', note: 'Hamstrings, zero core demand' },
-        { name: 'Leg Press', sets: '3×10-12', note: 'Introduce week 3+. Moderate depth.' },
-        { name: 'Hack Squat', sets: '3×8-10', note: 'Week 5+ when cleared for heavy bracing' },
-        { name: 'Standing Calf Raise', sets: '4×15-20', note: 'Full stretch at bottom' },
-        { name: 'Incline Walk (treadmill)', sets: '20 min', note: '12-15% incline, 3.0-3.5 mph' },
-        { name: 'Cable Lateral Raise', sets: '3×20', note: 'Light, chase the burn' },
-        { name: 'Cable Curl', sets: '3×20', note: 'Light, constant tension' },
-        { name: 'Pushdowns', sets: '3×20', note: 'Light, blood flow' },
+        { name: 'Ring Dips', sets: '4×8-12', note: 'Deep stretch' },
+        { name: 'Ring Pushups', sets: '3×Max', note: 'Squeeze rings at top' },
+        { name: 'DB Lateral Raise', sets: '4×15-20', note: 'Width finisher' },
+        { name: 'Overhead DB Tricep Ext', sets: '3×12', note: 'Home isolation' },
       ],
     },
     {
-      name: 'REST', subtitle: 'Active Recovery', muscles: 'Recovery · Mobility', type: 'recovery',
+      name: 'LONG CARDIO', subtitle: 'Aerobic Base', muscles: 'Cardio', type: 'recovery',
       exercises: [
-        { name: 'Walk (outside)', sets: '30-45 min', note: 'Zone 2. Circulation aids healing.' },
-        { name: 'Upper Body Stretching', sets: '10 min', note: 'Chest doorway stretch, shoulder CARs' },
-        { name: 'Foam Roll (upper back)', sets: '5 min', note: 'Thoracic extension' },
+        { name: 'Long Run or Erg', sets: '75 min', note: 'Keep it easy. Zone 2.' },
+        { name: 'Mobility/Stretching', sets: '15 min', note: 'Full body recovery' },
       ],
     },
   ],
@@ -459,22 +445,21 @@ const Reunions = {
     // Nutrition
     html += `
       <div class="r-nutrition">
-        <div class="r-section-title">NUTRITION</div>
-        <p><strong>Protein:</strong> 1g/lb minimum. Non-negotiable.</p>
-        <p><strong>Calories:</strong> Slight deficit (200-300 below TDEE). Recomp zone.</p>
-        <p><strong>Fiber:</strong> Extra important right now. 30g+ daily, plenty of water.</p>
+        <div class="r-section-title">NUTRITION (V-TAPER FOCUS)</div>
+        <p><strong>Protein:</strong> 1g/lb minimum. Non-negotiable for muscle retention.</p>
+        <p><strong>Calories:</strong> Slight deficit (200-300 below TDEE). Focus on body recomp.</p>
+        <p><strong>Fiber:</strong> 30g+ daily. Crucial for post-op digestive health.</p>
         <p><strong>Creatine:</strong> 5g/day.</p>
       </div>
     `;
 
-    // Legs recovery timeline
+    // Health/Strength legs notes
     html += `
       <div class="r-nutrition">
-        <div class="r-section-title">LEGS RECOVERY TIMELINE</div>
-        <p><strong>Weeks 1-2:</strong> Machines only — extensions, curls, calves. No heavy bracing.</p>
-        <p><strong>Weeks 3-4:</strong> Add leg press, moderate compounds. Light-moderate bracing OK.</p>
-        <p><strong>Weeks 5+:</strong> Hack squat, heavier compounds if wound is closed and pain-free.</p>
-        <p><strong>Listen to the site:</strong> Any bleeding or pressure → drop the exercise, wait a week.</p>
+        <div class="r-section-title">HEALTH & STRENGTH (LEGS)</div>
+        <p><strong>Unilateral Focus:</strong> Split squats and Single-leg RDLs build stability and health without the surgical risk of heavy barbell bracing.</p>
+        <p><strong>Bracing:</strong> Focus on fluid breathing throughout the set. Do NOT use the Valsalva maneuver (breath-holding).</p>
+        <p><strong>Progression:</strong> Add weight only when you can complete all reps with zero "pressure" at the surgical site.</p>
       </div>
     `;
 
