@@ -183,6 +183,21 @@ const Reunions = {
     return workout.type === 'cardio' || workout.type === 'recovery';
   },
 
+  _shouldShowStopwatch(dayNum) {
+    if (this.view !== 'today') return false;
+    if (dayNum !== this.getDayNum()) return false;
+    const workout = this.SPLIT[dayNum % 7];
+    return !!(workout && workout.type === 'lifting');
+  },
+
+  _syncStopwatch(dayNum) {
+    const dashboard = document.getElementById('screen-dashboard');
+    const shouldShow = this._shouldShowStopwatch(dayNum);
+    if (dashboard) dashboard.classList.toggle('has-stopwatch', shouldShow);
+    if (shouldShow) Stopwatch.show();
+    else Stopwatch.hide();
+  },
+
   _saveTodayInput() {
     // Live save is only valid when the Today tab is showing real today.
     if (this.viewDay !== null && this.viewDay !== this.getDayNum()) return;
@@ -332,6 +347,8 @@ const Reunions = {
       case 'checkin': this._renderCheckin(body, this.getWeek(todayNum)); break;
       case 'log': this._renderLog(body); break;
     }
+
+    this._syncStopwatch(activeNum);
   },
 
   setView(v) {

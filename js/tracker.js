@@ -5,14 +5,37 @@ const Stopwatch = {
   _elapsed: 0,
   _running: false,
 
-  show() {
-    document.getElementById('stopwatch-bar').classList.remove('hidden');
-    this.reset();
+  _getUI() {
+    return {
+      bar: document.getElementById('stopwatch-bar'),
+      time: document.getElementById('sw-time'),
+      toggle: document.getElementById('sw-toggle'),
+    };
+  },
+
+  _syncUI() {
+    const { bar, toggle } = this._getUI();
+    if (bar) bar.classList.toggle('running', this._running);
+    if (toggle) toggle.textContent = this._running ? '\u23F8' : '\u25B6';
+  },
+
+  show(options = {}) {
+    const { reset = false } = options;
+    const { bar } = this._getUI();
+    if (!bar) return;
+    bar.classList.remove('hidden');
+    if (reset) {
+      this.reset();
+      return;
+    }
+    this._syncUI();
+    this._updateDisplay();
   },
 
   hide() {
-    document.getElementById('stopwatch-bar').classList.add('hidden');
     this.stop();
+    const { bar } = this._getUI();
+    if (bar) bar.classList.add('hidden');
   },
 
   toggle() {
@@ -20,42 +43,51 @@ const Stopwatch = {
   },
 
   start() {
+    if (this._running) return;
     this._running = true;
     this._startTime = Date.now() - this._elapsed;
+    clearInterval(this._interval);
     this._interval = setInterval(() => this._updateDisplay(), 100);
-    document.getElementById('sw-toggle').textContent = '\u23F8';
-    document.getElementById('stopwatch-bar').classList.add('running');
+    this._syncUI();
+    this._updateDisplay();
   },
 
   pause() {
+    if (!this._running || this._startTime === null) return;
     this._running = false;
     this._elapsed = Date.now() - this._startTime;
+    this._startTime = null;
     clearInterval(this._interval);
-    document.getElementById('sw-toggle').textContent = '\u25B6';
-    document.getElementById('stopwatch-bar').classList.remove('running');
+    this._interval = null;
+    this._syncUI();
+    this._updateDisplay();
   },
 
   stop() {
-    this.pause();
+    clearInterval(this._interval);
+    this._interval = null;
+    this._running = false;
+    this._startTime = null;
     this._elapsed = 0;
+    this._syncUI();
     this._updateDisplay();
   },
 
   reset() {
-    this.pause();
-    this._elapsed = 0;
-    this._updateDisplay();
+    this.stop();
   },
 
   _updateDisplay() {
-    if (this._running) {
+    if (this._running && this._startTime !== null) {
       this._elapsed = Date.now() - this._startTime;
     }
     const totalSec = Math.floor(this._elapsed / 1000);
     const min = Math.floor(totalSec / 60);
     const sec = totalSec % 60;
-    document.getElementById('sw-time').textContent =
-      `${min}:${sec.toString().padStart(2, '0')}`;
+    const { time } = this._getUI();
+    if (time) {
+      time.textContent = `${min}:${sec.toString().padStart(2, '0')}`;
+    }
   }
 };
 
@@ -115,7 +147,7 @@ const Tracker = {
 
     // Show stopwatch for lifting/superset workouts
     if (w.type === 'lifting' || w.type === 'supersets') {
-      Stopwatch.show();
+      Stopwatch.show({ reset: true });
     } else {
       Stopwatch.hide();
     }

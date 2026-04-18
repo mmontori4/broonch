@@ -711,7 +711,7 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 
 /* ===== STOPWATCH ===== */
 .stopwatch-bar {
-  position: sticky;
+  position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
@@ -722,7 +722,13 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
   align-items: center;
   justify-content: center;
   gap: 16px;
-  z-index: 20;
+  z-index: 140;
+}
+body[data-screen="dashboard"] .stopwatch-bar {
+  bottom: calc(var(--nav-h) + var(--safe-bottom));
+}
+body[data-screen="tracker"] .stopwatch-bar {
+  padding-bottom: calc(10px + var(--safe-bottom));
 }
 .stopwatch-bar.hidden {
   display: none;
@@ -747,7 +753,7 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 }
 
 .sw-btn {
-  width: 44px;
+  min-width: 44px;
   height: 44px;
   border-radius: 50%;
   display: flex;
@@ -761,6 +767,16 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 .sw-btn:active {
   background: var(--surface2);
   color: var(--text);
+}
+
+.sw-reset {
+  width: auto;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
 }
 
 .sw-toggle {
@@ -816,6 +832,10 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
   padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 16px);
   overflow-y: auto;
   flex: 1;
+}
+
+#screen-dashboard.has-stopwatch .r-body {
+  padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 96px);
 }
 
 /* Today card */

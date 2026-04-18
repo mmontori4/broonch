@@ -4,6 +4,7 @@ const App = {
   currentWeek: 1,
 
   init() {
+    document.body.dataset.screen = 'profile';
     Sync.init();
     const user = Store.getUser();
     if (user) {
@@ -27,7 +28,6 @@ const App = {
   },
 
   _enterDashboard(user) {
-    Reunions.init();
     this.showScreen('dashboard');
   },
 
@@ -82,11 +82,16 @@ const App = {
   showScreen(name) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(`screen-${name}`).classList.add('active');
+    document.body.dataset.screen = name;
 
     // Update nav buttons
     document.querySelectorAll('.nav-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.screen === name);
     });
+
+    if (name !== 'dashboard' && name !== 'tracker') {
+      Stopwatch.hide();
+    }
 
     // Refresh data when showing certain screens
     if (name === 'dashboard') {
