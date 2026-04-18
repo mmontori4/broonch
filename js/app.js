@@ -89,8 +89,8 @@ const App = {
       btn.classList.toggle('active', btn.dataset.screen === name);
     });
 
-    if (name !== 'dashboard' && name !== 'tracker') {
-      Stopwatch.hide();
+    if (name === 'profile') {
+      Stopwatch.hide({ reset: true });
     }
 
     // Refresh data when showing certain screens

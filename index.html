@@ -150,9 +150,10 @@
   </div>
 
   <div id="stopwatch-bar" class="stopwatch-bar hidden" aria-live="polite">
-    <button type="button" class="sw-btn sw-reset" onclick="Stopwatch.reset()">Reset</button>
-    <div class="sw-display" id="sw-time" onclick="Stopwatch.toggle()">0:00</div>
-    <button type="button" class="sw-btn sw-toggle" id="sw-toggle" onclick="Stopwatch.toggle()" aria-label="Start or pause timer">&#x25B6;</button>
+    <button type="button" class="sw-btn sw-start" id="sw-start" onclick="Stopwatch.start()">Start</button>
+    <div class="sw-display" id="sw-time">0:00</div>
+    <button type="button" class="sw-btn sw-lap" id="sw-lap" onclick="Stopwatch.lap()">Lap</button>
+    <button type="button" class="sw-btn sw-stop" id="sw-stop" onclick="Stopwatch.stop()">Stop</button>
   </div>
 
   <script src="js/data.js"></script>

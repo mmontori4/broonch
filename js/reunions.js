@@ -183,7 +183,7 @@ const Reunions = {
     return workout.type === 'cardio' || workout.type === 'recovery';
   },
 
-  _shouldShowStopwatch(dayNum) {
+  _shouldAutoShowStopwatch(dayNum) {
     if (this.view !== 'today') return false;
     if (dayNum !== this.getDayNum()) return false;
     const workout = this.SPLIT[dayNum % 7];
@@ -191,9 +191,7 @@ const Reunions = {
   },
 
   _syncStopwatch(dayNum) {
-    const dashboard = document.getElementById('screen-dashboard');
-    const shouldShow = this._shouldShowStopwatch(dayNum);
-    if (dashboard) dashboard.classList.toggle('has-stopwatch', shouldShow);
+    const shouldShow = this._shouldAutoShowStopwatch(dayNum) || Stopwatch.isVisible();
     if (shouldShow) Stopwatch.show();
     else Stopwatch.hide();
   },
