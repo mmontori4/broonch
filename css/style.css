@@ -982,6 +982,62 @@ body[data-screen="tracker"] .stopwatch-bar {
 }
 .r-jump-today:active { background: var(--accent)25; }
 
+.r-variant-picker {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin: 0 0 10px 4px;
+}
+.r-variant-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.r-variant-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--text2);
+}
+.r-variant-equip {
+  font-size: 0.65rem;
+  color: var(--text2);
+  text-align: right;
+}
+.r-variant-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.r-variant-btn {
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text2);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+}
+.r-variant-btn.active {
+  color: var(--orange);
+  border-color: var(--orange)60;
+  background: var(--orange)12;
+}
+.r-variant-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.r-variant-hint {
+  margin-top: 8px;
+  font-size: 0.68rem;
+  color: var(--text2);
+  line-height: 1.35;
+}
+
 /* Readonly set rows (preview mode) */
 .r-set-row-readonly .r-set-field-readonly {
   display: flex;

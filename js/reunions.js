@@ -19,78 +19,263 @@ const Reunions = {
 
   SPLIT: [
     {
-      name: 'PUSH + WIDTH', subtitle: 'Heavy Push + Side Delts', muscles: 'Chest · Shoulders · Triceps', type: 'lifting',
-      warmup: { label: '15 min Zone 2', note: 'Erg or brisk walk. Blood flow + joint prep.' },
-      exercises: [
-        { name: 'BB Bench Press', sets: '3×5-8', note: 'Heavy compound' },
-        { name: 'Seated DB OHP', sets: '3×8-10', note: 'Vertical push base' },
-        { name: 'Incline DB Press', sets: '3×10-12', note: 'Upper chest shelf' },
-        { name: 'Cable Lateral Raise', sets: '4×15', note: 'Constant tension. Width focus.', group: 'A' },
-        { name: 'Tricep Cable Pushdown', sets: '3×12-15', note: 'Full extension', group: 'A' },
-      ],
+      name: 'PUSH + WIDTH', subtitle: 'Heavy Push + Side Delts', muscles: 'Chest · Shoulders · Triceps', type: 'lifting', defaultVariant: 'golds',
+      variants: {
+        golds: {
+          label: "Gold's",
+          warmup: { label: '15 min Zone 2', note: 'Erg or brisk walk. Blood flow + joint prep.' },
+          exercises: [
+            { name: 'BB Bench Press', sets: '3×5-8', note: 'Heavy compound' },
+            { name: 'Seated DB OHP', sets: '3×8-10', note: 'Vertical push base' },
+            { name: 'Incline DB Press', sets: '4×8-12', note: 'Upper chest priority lift' },
+            { name: 'Cable Lateral Raise', sets: '4×15', note: 'Constant tension. Width focus.', group: 'A' },
+            { name: 'Tricep Cable Pushdown', sets: '3×12-15', note: 'Full extension', group: 'A' },
+          ],
+        },
+        home: {
+          label: 'Home',
+          warmup: { label: '15 min Zone 2', note: 'Erg or brisk walk. Rings + DB setup.' },
+          exercises: [
+            { name: 'Weighted Ring Dips', sets: '4×6-10', note: 'Primary heavy push. Add load before chasing reps.' },
+            { name: 'Seated DB OHP', sets: '3×8-10', note: 'Vertical push base' },
+            { name: 'Weighted Feet-Elevated Ring Pushups', sets: '4×8-12', note: 'Upper chest shelf. Add load before extra reps.' },
+            { name: 'DB Lateral Raise', sets: '4×15-20', note: 'Width focus', group: 'A' },
+            { name: 'Overhead DB Tricep Ext', sets: '3×12-15', note: 'Home tricep work', group: 'A' },
+          ],
+        },
+      },
     },
     {
-      name: 'LAT WIDTH', subtitle: 'Ring Pulls + Lat Stretch', muscles: 'Lats · Biceps', type: 'lifting',
-      warmup: { label: '15 min Zone 2', note: 'Erg preferred. Primes lats and grip.' },
-      exercises: [
-        { name: 'Ring Pull-ups', sets: '4×6-10', note: 'Dead hang, full stretch. Band assist if needed.' },
-        { name: 'Ring Rows', sets: '3×12', note: 'Feet elevated' },
-        { name: 'DB Lat Pullovers', sets: '3×12-15', note: 'Stretch-mediated hypertrophy' },
-        { name: 'DB Curls', sets: '3×12-15', note: 'Standard or incline' },
-        { name: 'DB Hammer Curls', sets: '3×12', note: 'Brachialis focus' },
-      ],
+      name: 'LAT WIDTH', subtitle: 'Ring Pulls + Lat Stretch', muscles: 'Lats · Biceps', type: 'lifting', defaultVariant: 'home',
+      variants: {
+        home: {
+          label: 'Home',
+          warmup: { label: '15 min Zone 2', note: 'Erg preferred. Primes lats and grip.' },
+          exercises: [
+            { name: 'Weighted Ring Pull-ups', sets: '4×6-10', note: 'Dead hang, full stretch. Band assist or add load as needed.' },
+            { name: 'Ring Rows', sets: '3×12', note: 'Feet elevated' },
+            { name: 'DB Lat Pullovers', sets: '3×12-15', note: 'Stretch-mediated hypertrophy' },
+            { name: 'DB Curls', sets: '3×12-15', note: 'Standard or incline' },
+            { name: 'DB Hammer Curls', sets: '3×12', note: 'Brachialis focus' },
+          ],
+        },
+        golds: {
+          label: "Gold's",
+          warmup: { label: '15 min Zone 2', note: 'Erg preferred. Prime lats, elbows, and grip.' },
+          exercises: [
+            { name: 'Weighted Pull-ups', sets: '4×6-10', note: 'Width base. Add load if strong.' },
+            { name: 'Seated Cable Row', sets: '3×10-12', note: 'Controlled squeeze through full range' },
+            { name: 'Lat Pulldown (Wide)', sets: '3×12-15', note: 'Stretch fully at the top' },
+            { name: 'DB Curls', sets: '3×12-15', note: 'Standard or incline' },
+            { name: 'DB Hammer Curls', sets: '3×12', note: 'Brachialis focus' },
+          ],
+        },
+      },
     },
     {
-      name: 'THICKNESS/LEGS', subtitle: 'BB Rows + Health Legs', muscles: 'Back · Quads · Hamstrings', type: 'lifting',
-      warmup: { label: '15 min Zone 2', note: 'Erg or bike. Warm hips and low back.' },
-      exercises: [
-        { name: 'Barbell Row (Strict)', sets: '4×6-8', note: 'Mid-back thickness' },
-        { name: 'Chest-Supported Row', sets: '3×10-12', note: 'Isolate back' },
-        { name: 'DB Single-Leg RDL', sets: '3×12/side', note: 'Posterior chain. Back health.' },
-        { name: 'DB Split Squats', sets: '3×10/side', note: 'Stability + health. No bracing.', group: 'A' },
-        { name: 'Machine Lateral Raise', sets: '3×15', note: 'Maintain shoulder volume', group: 'A' },
-      ],
+      name: 'THICKNESS/LEGS', subtitle: 'BB Rows + Health Legs', muscles: 'Back · Quads · Hamstrings', type: 'lifting', defaultVariant: 'golds',
+      variants: {
+        golds: {
+          label: "Gold's",
+          warmup: { label: '15 min Zone 2', note: 'Erg or bike. Warm hips and low back.' },
+          exercises: [
+            { name: 'Barbell Row (Strict)', sets: '4×6-8', note: 'Mid-back thickness' },
+            { name: 'Chest-Supported Row', sets: '3×10-12', note: 'Isolate back' },
+            { name: 'DB Single-Leg RDL', sets: '3×12/side', note: 'Posterior chain. Back health.' },
+            { name: 'DB Split Squats', sets: '3×10/side', note: 'Stability + health. No bracing.', group: 'A' },
+            { name: 'Machine Lateral Raise', sets: '3×15', note: 'Maintain shoulder volume', group: 'A' },
+          ],
+        },
+        home: {
+          label: 'Home',
+          warmup: { label: '15 min Zone 2', note: 'Erg preferred. Warm hips, grip, and low back.' },
+          exercises: [
+            { name: 'Single-Arm DB Row', sets: '4×10-12/side', note: 'Heavy horizontal pull' },
+            { name: 'Feet-Elevated Ring Rows', sets: '3×12-15', note: 'Mid-back squeeze' },
+            { name: 'DB Single-Leg RDL', sets: '3×12/side', note: 'Posterior chain. Back health.' },
+            { name: 'DB Split Squats', sets: '3×10/side', note: 'Stability + health. No bracing.', group: 'A' },
+            { name: 'DB Lateral Raise', sets: '3×15-20', note: 'Maintain shoulder volume', group: 'A' },
+          ],
+        },
+      },
     },
     {
-      name: 'CARDIO + WIDTH', subtitle: 'Z2 Erg + Side Delt Mini', muscles: 'Cardio · Side Delts', type: 'cardio',
-      exercises: [
-        { name: 'Zone 2 Erg', sets: '60 min', note: 'Talk test intensity' },
-        { name: 'DB Lateral Raise', sets: '5×15-20', note: 'Frequency for width' },
-        { name: 'Norwegian 4x4', sets: '4×4 min', note: 'WEEK 5+ ONLY. 90% HR.' },
-      ],
+      name: 'CARDIO + WIDTH', subtitle: 'Z2 Erg + Side Delt Mini', muscles: 'Cardio · Side Delts', type: 'cardio', defaultVariant: 'home',
+      variants: {
+        home: {
+          label: 'Home',
+          exercises: [
+            { name: 'Zone 2 Erg', sets: '60 min', note: 'Talk test intensity' },
+            { name: 'DB Lateral Raise', sets: '5×15-20', note: 'Frequency for width' },
+            { name: 'Norwegian 4x4', sets: '4×4 min', note: 'WEEK 5+ ONLY. 90% HR.' },
+          ],
+        },
+        golds: {
+          label: "Gold's",
+          exercises: [
+            { name: 'Zone 2 Erg / Treadmill', sets: '60 min', note: 'Talk test intensity' },
+            { name: 'Cable Lateral Raise', sets: '5×15-20', note: 'Ideal tension profile' },
+            { name: 'Norwegian 4x4', sets: '4×4 min', note: 'WEEK 5+ ONLY. Erg, bike, or treadmill.' },
+          ],
+        },
+      },
     },
     {
-      name: 'V-TAPER SPEC', subtitle: 'Weighted Pulls + Width', muscles: 'Lats · Shoulders · Upper Chest', type: 'lifting',
-      warmup: { label: '15 min Zone 2', note: 'Erg preferred. Prime the pulls.' },
-      exercises: [
-        { name: 'Weighted Pull-ups', sets: '4×6-10', note: 'Width specialization' },
-        { name: 'Lat Pulldown (Wide)', sets: '3×12-15', note: 'Control the eccentric' },
-        { name: 'Cable Lateral Raise (Behind Back)', sets: '4×15', note: 'Max stretch on delt', group: 'A' },
-        { name: 'Low-to-High Cable Fly', sets: '3×15', note: 'Upper chest shelf', group: 'A' },
-        { name: 'Overhead Tricep Extension', sets: '3×12', note: 'Long head focus', group: 'B' },
-        { name: 'Preacher Curls', sets: '3×12', note: 'Peak contraction', group: 'B' },
-      ],
+      name: 'V-TAPER SPEC', subtitle: 'Weighted Pulls + Width', muscles: 'Lats · Shoulders · Upper Chest', type: 'lifting', defaultVariant: 'golds',
+      variants: {
+        golds: {
+          label: "Gold's",
+          warmup: { label: '15 min Zone 2', note: 'Erg preferred. Prime the pulls.' },
+          exercises: [
+            { name: 'Weighted Pull-ups', sets: '4×6-10', note: 'Width specialization' },
+            { name: 'Lat Pulldown (Wide)', sets: '3×12-15', note: 'Control the eccentric' },
+            { name: 'Cable Lateral Raise (Behind Back)', sets: '4×15', note: 'Max stretch on delt', group: 'A' },
+            { name: 'Low-to-High Cable Fly', sets: '4×12-15', note: 'Upper chest shelf', group: 'A' },
+            { name: 'Overhead Tricep Extension', sets: '3×12', note: 'Long head focus', group: 'B' },
+            { name: 'Preacher Curls', sets: '3×12', note: 'Peak contraction', group: 'B' },
+          ],
+        },
+        home: {
+          label: 'Home',
+          warmup: { label: '15 min Zone 2', note: 'Erg preferred. Prime lats, shoulders, and grip.' },
+          exercises: [
+            { name: 'Weighted Ring Pull-ups', sets: '4×6-10', note: 'Add load if all sets are easy' },
+            { name: 'Band Lat Pulldown', sets: '3×15-20', note: 'Anchor high. Drive elbows down.' },
+            { name: 'Weighted Feet-Elevated Ring Pushups', sets: '4×8-12', note: 'Upper chest bias. Add load before extra reps.' },
+            { name: 'DB Lateral Raise', sets: '4×15-20', note: 'Strict form', group: 'A' },
+            { name: 'Low-to-High Band Fly', sets: '3×15-20', note: 'Upper chest squeeze', group: 'A' },
+            { name: 'DB Curls', sets: '3×12', note: 'Peak squeeze' },
+          ],
+        },
+      },
     },
     {
-      name: 'PUSH B (HOME)', subtitle: 'Ring Dips + Upper Chest', muscles: 'Chest · Shoulders · Triceps', type: 'lifting',
-      warmup: { label: '15 min Zone 2', note: 'Erg or brisk walk.' },
-      exercises: [
-        { name: 'Ring Dips', sets: '4×8-12', note: 'Deep stretch' },
-        { name: 'Ring Pushups', sets: '3×Max', note: 'Squeeze rings at top', group: 'A' },
-        { name: 'DB Lateral Raise', sets: '4×15-20', note: 'Width finisher', group: 'A' },
-        { name: 'Overhead DB Tricep Ext', sets: '3×12', note: 'Home isolation' },
-      ],
+      name: 'PUSH B', subtitle: 'Ring Dips + Upper Chest', muscles: 'Chest · Shoulders · Triceps', type: 'lifting', defaultVariant: 'home',
+      variants: {
+        home: {
+          label: 'Home',
+          warmup: { label: '15 min Zone 2', note: 'Erg or brisk walk.' },
+          exercises: [
+            { name: 'Weighted Ring Dips', sets: '4×8-12', note: 'Deep stretch. Add load before pushing reps.' },
+            { name: 'Weighted Feet-Elevated Ring Pushups', sets: '4×8-12', note: 'Upper chest bias' },
+            { name: 'DB Lateral Raise', sets: '4×15-20', note: 'Width finisher', group: 'A' },
+            { name: 'Low-to-High Band Fly', sets: '3×15-20', note: 'Upper chest squeeze', group: 'A' },
+            { name: 'Overhead DB Tricep Ext', sets: '3×12', note: 'Home isolation' },
+          ],
+        },
+        golds: {
+          label: "Gold's",
+          warmup: { label: '15 min Zone 2', note: 'Erg or brisk walk.' },
+          exercises: [
+            { name: 'Weighted Dips', sets: '4×8-12', note: 'Ideal stretch-loaded push' },
+            { name: 'Incline DB Press', sets: '4×8-12', note: 'Upper chest emphasis' },
+            { name: 'Cable Lateral Raise', sets: '4×15', note: 'Constant tension', group: 'A' },
+            { name: 'Low-to-High Cable Fly', sets: '3×15', note: 'Upper chest shelf', group: 'A' },
+            { name: 'Tricep Cable Pushdown', sets: '3×12-15', note: 'Easy tricep volume' },
+          ],
+        },
+      },
     },
     {
-      name: 'LONG CARDIO', subtitle: 'Aerobic Base', muscles: 'Cardio', type: 'recovery',
-      exercises: [
-        { name: 'Long Run or Erg', sets: '75 min', note: 'Keep it easy. Zone 2.' },
-        { name: 'Mobility/Stretching', sets: '15 min', note: 'Full body recovery' },
-      ],
+      name: 'LONG CARDIO', subtitle: 'Aerobic Base', muscles: 'Cardio', type: 'recovery', defaultVariant: 'home',
+      variants: {
+        home: {
+          label: 'Home',
+          exercises: [
+            { name: 'Long Run or Erg', sets: '75 min', note: 'Keep it easy. Zone 2.' },
+            { name: 'Mobility/Stretching', sets: '15 min', note: 'Full body recovery' },
+          ],
+        },
+        golds: {
+          label: "Gold's",
+          exercises: [
+            { name: 'Long Erg / Treadmill / Bike', sets: '75 min', note: 'Keep it easy. Zone 2.' },
+            { name: 'Mobility/Stretching', sets: '15 min', note: 'Full body recovery' },
+          ],
+        },
+      },
     },
   ],
 
+  VARIANT_META: {
+    home: { label: 'Home', equipment: 'Weighted Rings · DBs · Bands · Erg' },
+    golds: { label: "Gold's", equipment: 'Full gym setup' },
+  },
+
   // ===== HELPERS =====
+  _getDefaultVariantKey(workout) {
+    if (workout && workout.defaultVariant) return workout.defaultVariant;
+    return workout && workout.location === 'gym' ? 'golds' : 'home';
+  },
+
+  _getWorkoutVariant(workout, variantKey) {
+    if (!workout || !workout.variants) return workout;
+    return workout.variants[variantKey] || workout.variants[this._getDefaultVariantKey(workout)];
+  },
+
+  _getVariantMeta(variantKey) {
+    return this.VARIANT_META[variantKey] || this.VARIANT_META.home;
+  },
+
+  _getVariantLabel(variantKey) {
+    return this._getVariantMeta(variantKey).label;
+  },
+
+  _getVariantKeyForDay(dayNum, workout = this.SPLIT[dayNum % 7]) {
+    const allowed = workout && workout.variants ? Object.keys(workout.variants) : ['home', 'golds'];
+    const entry = this._getEntryForDay(dayNum);
+    if (entry && entry.variantKey && allowed.includes(entry.variantKey)) return entry.variantKey;
+    const saved = this.data?.variantByDay?.[dayNum];
+    if (saved && allowed.includes(saved)) return saved;
+    return this._getDefaultVariantKey(workout);
+  },
+
+  _getWorkoutForDay(dayNum) {
+    const splitWorkout = this.SPLIT[dayNum % 7];
+    const variantKey = this._getVariantKeyForDay(dayNum, splitWorkout);
+    return {
+      splitWorkout,
+      variantKey,
+      workout: this._getWorkoutVariant(splitWorkout, variantKey),
+    };
+  },
+
+  _pruneEntryExercisesToVariant(entry, workoutVariant) {
+    if (!entry || !entry.exercises || !workoutVariant || !workoutVariant.exercises) return;
+    const allowed = new Set(workoutVariant.exercises.map(ex => ex.name));
+    entry.exercises = entry.exercises.filter(ex => allowed.has(ex.name));
+  },
+
+  _getVariantLabelForEntry(entry) {
+    if (!entry) return this._getVariantLabel('home');
+    if (entry.variantLabel) return entry.variantLabel;
+    const workout = this.SPLIT[entry.dayNum % 7];
+    return this._getVariantLabel(entry.variantKey || this._getDefaultVariantKey(workout));
+  },
+
+  setWorkoutVariant(dayNum, variantKey) {
+    const today = this.getDayNum();
+    if (dayNum !== today) return;
+
+    const splitWorkout = this.SPLIT[dayNum % 7];
+    if (!splitWorkout || !splitWorkout.variants || !splitWorkout.variants[variantKey]) return;
+
+    this._saveTodayInput();
+
+    if (!this.data.variantByDay) this.data.variantByDay = {};
+    this.data.variantByDay[dayNum] = variantKey;
+
+    const entry = this._getEntryForDay(dayNum);
+    if (entry) {
+      entry.variantKey = variantKey;
+      entry.variantLabel = this._getVariantLabel(variantKey);
+      this._pruneEntryExercisesToVariant(entry, this._getWorkoutVariant(splitWorkout, variantKey));
+    }
+
+    this._save();
+    this.render();
+  },
+
   _parseSets(str) {
     const m = str.match(/^(\d+)\s*[×x]/i);
     return m ? parseInt(m[1]) : null;
@@ -125,14 +310,15 @@ const Reunions = {
   // ===== STORAGE =====
   _load() {
     try {
-      this.data = JSON.parse(localStorage.getItem('reunions_data')) || { completedDays: [], checkins: [], workoutLog: [], baselines: {} };
+      this.data = JSON.parse(localStorage.getItem('reunions_data')) || { completedDays: [], checkins: [], workoutLog: [], baselines: {}, variantByDay: {} };
       if (!this.data.workoutLog) this.data.workoutLog = [];
       if (!this.data.completedDays) this.data.completedDays = [];
       if (!this.data.checkins) this.data.checkins = [];
       if (!this.data.baselines) this.data.baselines = {};
+      if (!this.data.variantByDay) this.data.variantByDay = {};
     } catch (e) {
       console.error('reunions _load failed', e);
-      this.data = { completedDays: [], checkins: [], workoutLog: [], baselines: {} };
+      this.data = { completedDays: [], checkins: [], workoutLog: [], baselines: {}, variantByDay: {} };
     }
   },
 
@@ -200,9 +386,9 @@ const Reunions = {
     // Live save is only valid when the Today tab is showing real today.
     if (this.viewDay !== null && this.viewDay !== this.getDayNum()) return;
     const d = this.getDayNum();
-    const workout = this.SPLIT[d % 7];
+    const { splitWorkout, variantKey, workout } = this._getWorkoutForDay(d);
     const exercises = this._collectTodayInputs();
-    const cardio = this._isCardioDay(workout) ? this._collectCardio() : null;
+    const cardio = this._isCardioDay(splitWorkout) ? this._collectCardio() : null;
     const hasData = exercises.length || this._cardioHasData(cardio);
     if (!hasData) return;
     let entry = this._getTodayEntry();
@@ -210,15 +396,17 @@ const Reunions = {
       entry = {
         dayNum: d,
         date: new Date().toISOString(),
-        name: workout.name,
-        subtitle: workout.subtitle,
-        muscles: workout.muscles,
+        name: splitWorkout.name,
+        subtitle: splitWorkout.subtitle,
+        muscles: splitWorkout.muscles,
         week: this.getWeek(d),
         exercises: [],
         complete: false,
       };
       this.data.workoutLog.push(entry);
     }
+    entry.variantKey = variantKey;
+    entry.variantLabel = this._getVariantLabel(variantKey);
     entry.exercises = exercises;
     if (cardio) entry.cardio = cardio;
     this._save();
@@ -379,7 +567,8 @@ const Reunions = {
 
   // ===== TODAY =====
   _renderToday(el, dayNum, week, phase) {
-    const workout = this.SPLIT[dayNum % 7];
+    const { splitWorkout, variantKey, workout } = this._getWorkoutForDay(dayNum);
+    const variantMeta = this._getVariantMeta(variantKey);
     const done = this.isCompleted(dayNum);
     const todayNum = this.getDayNum();
     const editable = dayNum === todayNum;
@@ -405,14 +594,25 @@ const Reunions = {
           <span class="r-day-label">DAY ${dayNum + 1}</span>
           <span class="r-status-pill ${done ? 'done' : ''}">${done ? 'DONE' : (isFuture ? 'PLANNED' : 'PENDING')}</span>
         </div>
-        <div class="r-today-name">${workout.name}</div>
-        <div class="r-today-sub">${workout.subtitle}</div>
-        <div class="r-today-muscles">${workout.muscles}</div>
+        <div class="r-today-name">${splitWorkout.name}</div>
+        <div class="r-today-sub">${splitWorkout.subtitle}</div>
+        <div class="r-today-muscles">${splitWorkout.muscles}</div>
+      </div>
+      <div class="r-variant-picker">
+        <div class="r-variant-top">
+          <div class="r-variant-label">WORKOUT SETUP</div>
+          <div class="r-variant-equip">${variantMeta.equipment}</div>
+        </div>
+        <div class="r-variant-toggle">
+          <button class="r-variant-btn ${variantKey === 'home' ? 'active' : ''}" onclick="Reunions.setWorkoutVariant(${dayNum}, 'home')" ${editable ? '' : 'disabled'}>Home</button>
+          <button class="r-variant-btn ${variantKey === 'golds' ? 'active' : ''}" onclick="Reunions.setWorkoutVariant(${dayNum}, 'golds')" ${editable ? '' : 'disabled'}>Gold's</button>
+        </div>
+        <div class="r-variant-hint">Gold's is the ideal full-equipment version. Home stays within weighted rings, dumbbells, bands, and erg.</div>
       </div>
     `;
 
     // RPE banner
-    if (workout.type !== 'recovery') {
+    if (splitWorkout.type !== 'recovery') {
       html += `
         <div class="r-rpe-banner">
           <span class="r-rpe-val">RPE ${phase.rpe}</span>
@@ -447,17 +647,18 @@ const Reunions = {
     // Exercises — saved entry wins over historical prefill when present.
     // Always pull group/note/setsConfig from the canonical workout definition
     // (the saved entry only stores name + sets data).
-    const exerciseList = (activeEntry && activeEntry.exercises && activeEntry.exercises.length)
-      ? activeEntry.exercises.map((e, idx) => {
-          const def = workout.exercises.find(w => w.name === e.name) || workout.exercises[idx];
-          return {
-            ...e,
-            setsConfig: def?.sets || '3x10',
-            note: def?.note || '',
-            group: def?.group,
-          };
-        })
-      : workout.exercises.map(e => ({ ...e, setsConfig: e.sets }));
+    const exerciseList = workout.exercises.map(ex => {
+      const saved = activeEntry && activeEntry.exercises
+        ? activeEntry.exercises.find(e => e.name === ex.name)
+        : null;
+      return {
+        name: ex.name,
+        sets: saved ? saved.sets : [],
+        setsConfig: ex.sets,
+        note: ex.note || '',
+        group: ex.group,
+      };
+    });
 
     // Group consecutive same-group exercises into superset blocks
     const blocks = [];
@@ -472,7 +673,7 @@ const Reunions = {
 
     const renderExercise = (ex) => {
       const numSets = this._parseSets(ex.setsConfig);
-      const prefillSets = liveMap[ex.name] || prefillMap[ex.name];
+      const prefillSets = (liveMap[ex.name] && liveMap[ex.name].length) ? liveMap[ex.name] : prefillMap[ex.name];
       const baseline = this.data.baselines[ex.name];
       const baselineStr = baseline ? `${baseline.weight}x${baseline.reps}` : '—';
       const nameAttrs = editable ? `contenteditable="true" onblur="Reunions._saveTodayInput()"` : '';
@@ -552,7 +753,7 @@ const Reunions = {
     });
 
     // Cardio log (cardio / recovery day types only)
-    if (this._isCardioDay(workout)) {
+    if (this._isCardioDay(splitWorkout)) {
       const c = (activeEntry && activeEntry.cardio) || {};
       if (editable) {
         html += `
@@ -640,11 +841,12 @@ const Reunions = {
 
     this.SPLIT.forEach((day, i) => {
       const isToday = i === todayIdx;
+      const defaultLabel = this._getVariantLabel(this._getDefaultVariantKey(day));
       html += `
         <button class="r-plan-day ${isToday ? 'is-today' : ''}" onclick="Reunions.goToSplitDay(${i})">
           <div class="r-plan-day-info">
             <div class="r-plan-day-name">${isToday ? '▸ ' : ''}${day.name}</div>
-            <div class="r-plan-day-muscles">${day.muscles}</div>
+            <div class="r-plan-day-muscles">${day.muscles} · Default ${defaultLabel}</div>
           </div>
           <span class="r-tier-arrow">▸</span>
         </button>
@@ -738,6 +940,7 @@ const Reunions = {
       [...completedWorkouts].reverse().forEach(w => {
         const d = new Date(w.date);
         const dayStr = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+        const variantLabel = this._getVariantLabelForEntry(w);
         const c = w.cardio;
         const cardioBits = c
           ? [c.pace, c.avgHR && `${c.avgHR} bpm avg`, c.maxHR && `${c.maxHR} max`].filter(Boolean)
@@ -753,7 +956,7 @@ const Reunions = {
             <div class="r-wlog-row">
               <div class="r-wlog-left">
                 <div class="r-wlog-name">${w.name}</div>
-                <div class="r-wlog-sub">${w.subtitle}</div>
+                <div class="r-wlog-sub">${w.subtitle} · ${variantLabel}</div>
               </div>
               <div class="r-wlog-right">
                 <div class="r-wlog-date">${dayStr}</div>
@@ -798,7 +1001,7 @@ const Reunions = {
   // ===== ACTIONS =====
   toggleComplete() {
     const d = this.getDayNum();
-    const workout = this.SPLIT[d % 7];
+    const { splitWorkout, variantKey, workout } = this._getWorkoutForDay(d);
     // Capture any pending input first so Mark Complete never drops a keystroke.
     this._saveTodayInput();
 
@@ -812,17 +1015,19 @@ const Reunions = {
         entry = {
           dayNum: d,
           date: new Date().toISOString(),
-          name: workout.name,
-          subtitle: workout.subtitle,
-          muscles: workout.muscles,
+          name: splitWorkout.name,
+          subtitle: splitWorkout.subtitle,
+          muscles: splitWorkout.muscles,
           week: this.getWeek(d),
           exercises: [],
           complete: false,
         };
         this.data.workoutLog.push(entry);
       }
+      entry.variantKey = variantKey;
+      entry.variantLabel = this._getVariantLabel(variantKey);
       entry.exercises = this._collectTodayInputs();
-      if (this._isCardioDay(workout)) {
+      if (this._isCardioDay(splitWorkout)) {
         const cardio = this._collectCardio();
         if (this._cardioHasData(cardio)) entry.cardio = cardio;
       }
