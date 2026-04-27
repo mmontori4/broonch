@@ -49,13 +49,14 @@ const SPLIT = [
     ],
   },
   {
-    name: "CARDIO + WIDTH",
-    subtitle: "Z2 Erg + Side Delt Mini",
-    muscles: "Cardio · Side Delts",
+    name: "PUSH B (HOME)",
+    subtitle: "Ring Dips + Upper Chest",
+    muscles: "Chest · Shoulders · Triceps",
     exercises: [
-      { name: "Zone 2 Erg", sets: "60 min", note: "Talk test intensity" },
-      { name: 'DB Lateral Raise', sets: '5×15-20', note: 'Frequency for width' },
-      { name: 'Norwegian 4x4', sets: '4×4 min', note: 'WEEK 5+ ONLY. 90% HR.' },
+      { name: "Ring Dips", sets: "4×8-12", note: "Deep stretch" },
+      { name: "Ring Pushups", sets: "3×Max", note: "Squeeze rings at top" },
+      { name: "DB Lateral Raise", sets: "4×15-20", note: "Width finisher" },
+      { name: "Overhead DB Tricep Ext", sets: "3×12", note: "Home isolation" },
     ],
   },
   {
@@ -72,14 +73,13 @@ const SPLIT = [
     ],
   },
   {
-    name: "PUSH B (HOME)",
-    subtitle: "Ring Dips + Upper Chest",
-    muscles: "Chest · Shoulders · Triceps",
+    name: "CARDIO + WIDTH",
+    subtitle: "Z2 Erg + Side Delt Mini",
+    muscles: "Cardio · Side Delts",
     exercises: [
-      { name: "Ring Dips", sets: "4×8-12", note: "Deep stretch" },
-      { name: "Ring Pushups", sets: "3×Max", note: "Squeeze rings at top" },
-      { name: "DB Lateral Raise", sets: "4×15-20", note: "Width finisher" },
-      { name: "Overhead DB Tricep Ext", sets: "3×12", note: "Home isolation" },
+      { name: "Zone 2 Erg", sets: "60 min", note: "Talk test intensity" },
+      { name: 'DB Lateral Raise', sets: '5×15-20', note: 'Frequency for width' },
+      { name: 'Norwegian 4x4', sets: '4×4 min', note: 'WEEK 5+ ONLY. 90% HR.' },
     ],
   },
   {

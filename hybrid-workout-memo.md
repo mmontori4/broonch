@@ -35,9 +35,9 @@ Transition to a more flexible workout structure that favors home sessions while 
 *   **Mon (Gym):** Heavy Push + Shoulders (BB Bench, Heavy DB OHP)
 *   **Tue (Home):** Pull-ups + Ring Rows + DB Curls (Hypertrophy Pull)
 *   **Wed (Gym):** Heavy Pull + Back Thickness (BB Rows, Deadlifts/Legs)
-*   **Thu (Home):** Zone 2 Erg (45 min)
+*   **Thu (Home):** Ring Dips + Ring Pushups + DB Lateral Raises (Hypertrophy Push)
 *   **Fri (Gym):** Push/Pull Accessory (Cables, Machines, Vanity Work)
-*   **Sat (Home):** Ring Dips + Ring Pushups + DB Lateral Raises (Hypertrophy Push)
+*   **Sat (Home):** Zone 2 Erg (45-60 min) + Side Delt Micro-Loading
 *   **Sun (Home):** Long Zone 2 (Erg or Run)
 
 ---

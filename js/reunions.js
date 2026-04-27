@@ -100,22 +100,28 @@ const Reunions = {
       },
     },
     {
-      name: 'CARDIO + WIDTH', subtitle: 'Z2 Erg + Side Delt Mini', muscles: 'Cardio · Side Delts', type: 'cardio', defaultVariant: 'home',
+      name: 'PUSH B', subtitle: 'Ring Dips + Upper Chest', muscles: 'Chest · Shoulders · Triceps', type: 'lifting', defaultVariant: 'home',
       variants: {
         home: {
           label: 'Home',
+          warmup: { label: '15 min Zone 2', note: 'Erg or brisk walk.' },
           exercises: [
-            { name: 'Zone 2 Erg', sets: '60 min', note: 'Talk test intensity' },
-            { name: 'DB Lateral Raise', sets: '5×15-20', note: 'Frequency for width' },
-            { name: 'Norwegian 4x4', sets: '4×4 min', note: 'WEEK 5+ ONLY. 90% HR.' },
+            { name: 'Weighted Ring Dips', sets: '4×8-12', note: 'Deep stretch. Add load before pushing reps.' },
+            { name: 'Weighted Feet-Elevated Ring Pushups', sets: '4×8-12', note: 'Upper chest bias' },
+            { name: 'DB Lateral Raise', sets: '4×15-20', note: 'Width finisher', group: 'A' },
+            { name: 'Low-to-High Band Fly', sets: '3×15-20', note: 'Upper chest squeeze', group: 'A' },
+            { name: 'Overhead DB Tricep Ext', sets: '3×12', note: 'Home isolation' },
           ],
         },
         golds: {
           label: "Gold's",
+          warmup: { label: '15 min Zone 2', note: 'Erg or brisk walk.' },
           exercises: [
-            { name: 'Zone 2 Erg / Treadmill', sets: '60 min', note: 'Talk test intensity' },
-            { name: 'Cable Lateral Raise', sets: '5×15-20', note: 'Ideal tension profile' },
-            { name: 'Norwegian 4x4', sets: '4×4 min', note: 'WEEK 5+ ONLY. Erg, bike, or treadmill.' },
+            { name: 'Weighted Dips', sets: '4×8-12', note: 'Ideal stretch-loaded push' },
+            { name: 'Incline DB Press', sets: '4×8-12', note: 'Upper chest emphasis' },
+            { name: 'Cable Lateral Raise', sets: '4×15', note: 'Constant tension', group: 'A' },
+            { name: 'Low-to-High Cable Fly', sets: '3×15', note: 'Upper chest shelf', group: 'A' },
+            { name: 'Tricep Cable Pushdown', sets: '3×12-15', note: 'Easy tricep volume' },
           ],
         },
       },
@@ -150,28 +156,22 @@ const Reunions = {
       },
     },
     {
-      name: 'PUSH B', subtitle: 'Ring Dips + Upper Chest', muscles: 'Chest · Shoulders · Triceps', type: 'lifting', defaultVariant: 'home',
+      name: 'CARDIO + WIDTH', subtitle: 'Z2 Erg + Side Delt Mini', muscles: 'Cardio · Side Delts', type: 'cardio', defaultVariant: 'home',
       variants: {
         home: {
           label: 'Home',
-          warmup: { label: '15 min Zone 2', note: 'Erg or brisk walk.' },
           exercises: [
-            { name: 'Weighted Ring Dips', sets: '4×8-12', note: 'Deep stretch. Add load before pushing reps.' },
-            { name: 'Weighted Feet-Elevated Ring Pushups', sets: '4×8-12', note: 'Upper chest bias' },
-            { name: 'DB Lateral Raise', sets: '4×15-20', note: 'Width finisher', group: 'A' },
-            { name: 'Low-to-High Band Fly', sets: '3×15-20', note: 'Upper chest squeeze', group: 'A' },
-            { name: 'Overhead DB Tricep Ext', sets: '3×12', note: 'Home isolation' },
+            { name: 'Zone 2 Erg', sets: '60 min', note: 'Talk test intensity' },
+            { name: 'DB Lateral Raise', sets: '5×15-20', note: 'Frequency for width' },
+            { name: 'Norwegian 4x4', sets: '4×4 min', note: 'WEEK 5+ ONLY. 90% HR.' },
           ],
         },
         golds: {
           label: "Gold's",
-          warmup: { label: '15 min Zone 2', note: 'Erg or brisk walk.' },
           exercises: [
-            { name: 'Weighted Dips', sets: '4×8-12', note: 'Ideal stretch-loaded push' },
-            { name: 'Incline DB Press', sets: '4×8-12', note: 'Upper chest emphasis' },
-            { name: 'Cable Lateral Raise', sets: '4×15', note: 'Constant tension', group: 'A' },
-            { name: 'Low-to-High Cable Fly', sets: '3×15', note: 'Upper chest shelf', group: 'A' },
-            { name: 'Tricep Cable Pushdown', sets: '3×12-15', note: 'Easy tricep volume' },
+            { name: 'Zone 2 Erg / Treadmill', sets: '60 min', note: 'Talk test intensity' },
+            { name: 'Cable Lateral Raise', sets: '5×15-20', note: 'Ideal tension profile' },
+            { name: 'Norwegian 4x4', sets: '4×4 min', note: 'WEEK 5+ ONLY. Erg, bike, or treadmill.' },
           ],
         },
       },

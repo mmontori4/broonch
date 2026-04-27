@@ -14,12 +14,13 @@
 | **Monday** | Gold's Gym | **Push + Width** | Heavy Pressing + Side Delts | 15 min Z2 |
 | **Tuesday** | Home | **Lat Width** | Ring Pulls + Lat Stretch | 15 min Z2 |
 | **Wednesday**| Gold's Gym | **Thickness/Legs**| BB Rows + Health Legs | 15 min Z2 |
-| **Thursday** | Home | **Cardio + Width**| 60 min Z2 Erg + Side Delts | 60 min Z2 |
+| **Thursday** | Home | **Push B** | Ring Dips + Upper Chest | 15 min Z2 |
 | **Friday** | Gold's Gym | **V-Taper Spec** | Weighted Pulls + Width | 15 min Z2 |
-| **Saturday** | Home | **Push B** | Ring Dips + Upper Chest | 15 min Z2 |
+| **Saturday** | Home | **Cardio + Width**| 60 min Z2 Erg + Side Delts | 60 min Z2 |
 | **Sunday** | Home | **Long Cardio** | Aerobic Base (Run or Erg) | 75 min Z2 |
 
 **Total Weekly Zone 2:** ~210 minutes (Optimal for Longevity)
+**Main lifting days:** Monday-Friday. Weekend work is aerobic base plus side-delt micro-loading.
 
 ---
 
@@ -54,14 +55,13 @@
 5. **Machine Lateral Raise:** 3 x 15
 6. **Cooldown:** 5 min Zone 2
 
-### THURSDAY: Erg + Side Delt "Micro-Loading" (Home)
-*Goal: Conditioning + frequency advantage for shoulder width.*
-1. **Zone 2 Erg:** 60 minutes (Talk test intensity)
-2. **DB Lateral Raise (Mini-Session):** 5 sets of 15-20 reps
-3. **VO2 Max Protocol (STARTING WEEK 5 - MAY 4):**
-   - Add a "Norwegian 4x4" after the Zone 2 session.
-   - 4 min at 90% HR / 3 min easy recovery (x4).
-   - *Safety: No breath-holding; focus on fluid breathing.*
+### THURSDAY: Ring Hypertrophy Push (Home)
+*Goal: Second weekly push exposure without stacking heavy pressing against Monday.*
+0. **Warmup:** 10 min Zone 2
+1. **Ring Dips:** 4 x 8-12
+2. **Ring Pushups:** 3 x Max
+3. **DB Lateral Raise:** 4 x 15-20
+4. **Cooldown:** 5 min Zone 2
 
 ### FRIDAY: V-Taper Specialization (Gym)
 *Goal: High volume for the "V" muscles.*
@@ -73,13 +73,14 @@
 5. **Arm Accessories:** 3 sets Curls / 3 sets Extensions
 6. **Cooldown:** 5 min Zone 2
 
-### SATURDAY: Ring Hypertrophy Push (Home)
-*Goal: Chest and shoulder stimulus via high-intensity ring work.*
-0. **Warmup:** 10 min Zone 2
-1. **Ring Dips:** 4 x 8-12
-2. **Ring Pushups:** 3 x Max
-3. **DB Lateral Raise:** 4 x 15-20
-4. **Cooldown:** 5 min Zone 2
+### SATURDAY: Erg + Side Delt "Micro-Loading" (Home)
+*Goal: Conditioning + frequency advantage for shoulder width without another main lifting day.*
+1. **Zone 2 Erg:** 60 minutes (Talk test intensity)
+2. **DB Lateral Raise (Mini-Session):** 5 sets of 15-20 reps
+3. **VO2 Max Protocol (STARTING WEEK 5 - MAY 4):**
+   - Add a "Norwegian 4x4" after the Zone 2 session.
+   - 4 min at 90% HR / 3 min easy recovery (x4).
+   - *Safety: No breath-holding; focus on fluid breathing.*
 
 ---
 
